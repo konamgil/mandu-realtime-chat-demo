@@ -7,11 +7,13 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "dev": "mandu dev",
-    "build": "mandu build",
-    "start": "mandu start",
-    "check": "mandu check",
-    "guard": "mandu guard",
+    "dev": "bunx mandu dev",
+    "dev:safe": "bunx mandu lock && bunx mandu dev --watch",
+    "build": "bunx mandu build",
+    "start": "bunx mandu start",
+    "check": "bunx mandu check",
+    "guard": "bunx mandu guard",
+    "lock": "bunx mandu lock",
     "test": "bun test"
   },
   "dependencies": {

@@ -55,6 +55,22 @@ bun run dev
 실행 후 접속:
 - `http://localhost:3333`
 
+### Windows/환경별 안정 실행 (권장)
+
+`Lockfile 불일치` 경고나 dev 프로세스 종료 이슈가 보이면 아래 순서로 실행하세요.
+
+```bash
+bun run lock
+bun run dev:safe
+```
+
+또는 수동으로:
+
+```bash
+bunx mandu lock
+bunx mandu dev --watch
+```
+
 ---
 
 ## API 요약
