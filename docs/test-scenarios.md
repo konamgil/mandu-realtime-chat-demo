@@ -42,6 +42,20 @@ bun test tests/chat-send-validation.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 01:33 KST (issue-cycle)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0133.log`
+- 결과: 전체 pass (9/9)
+- 데모 재현/요구사항 도출:
+  - Scenario A/B 핵심 계약(재연결 catch-up, 입력 무결성)은 여전히 재현 가능하고 안정적
+  - 반면 브라우저 데모 경로는 런타임 `Invalid hook call`로 차단되어, 현재 우선 요구사항은 기능 추가가 아니라 **framework runtime 무결성 복구**
+- 철학 정합성 검토:
+  - 무결성/아키텍처 일관성: 훅 디스패처 오류가 남아있는 상태에서 신규 확장 이슈 착수는 정합성 위반
+  - 재사용 우선/중복 금지: route-level 임시 우회보다 framework 레이어 원인 해결이 우선
+  - 결론: 데모 근거 없는 변경은 보류, 재현 가능한 런타임 안정성 이슈만 추적
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0133.log`
+- 결과: `Invalid hook call` / `[Mandu] FRAMEWORK_BUG` 재발로 녹화 영상(`artifacts/videos/*.webm`) 미생성
+
+
 ### 2026-02-14 01:23 KST (issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0123.log`
 - 결과: 전체 pass (9/9)
