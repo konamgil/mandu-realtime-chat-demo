@@ -1,0 +1,13 @@
+{
+  "scenario": "realtime-chat-smoke",
+  "baseUrl": "http://localhost:3333",
+  "startedAt": "2026-02-13T17:36:15.178Z",
+  "endedAt": "2026-02-13T17:36:26.494Z",
+  "status": "failed",
+  "browserOpened": true,
+  "steps": [
+    "dev-started",
+    "health-ok:http://localhost:3333"
+  ],
+  "error": "forSelector: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('input[placeholder*=\"메시지\"]') to be visible\n"
+}

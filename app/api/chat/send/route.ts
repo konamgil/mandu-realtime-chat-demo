@@ -6,7 +6,11 @@ export async function POST(request: Request) {
   const text = typeof body?.text === "string" ? body.text.trim() : "";
 
   if (!text) {
-    return Response.json({ error: "text is required" }, { status: 400 });
+    return Response.json({ error: "text is required", code: "EMPTY_TEXT" }, { status: 400 });
+  }
+
+  if (text.length > 500) {
+    return Response.json({ error: "text must be <= 500 chars", code: "TEXT_TOO_LONG" }, { status: 422 });
   }
 
   const user = addMessage({
