@@ -17,6 +17,8 @@ export default function HomePage() {
   const [text, setText] = useState("");
   const [connected, setConnected] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [snapshotLimit, setSnapshotLimit] = useState<number>(50);
 
   const upsertMessages = (incoming: ChatMessage[]) => {
     setMessages((prev) => {
@@ -34,11 +36,18 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    setMessages([]);
     let latestMessageId: string | undefined;
 
     const syncMissedMessages = async () => {
-      const qs = latestMessageId ? `?sinceId=${encodeURIComponent(latestMessageId)}` : "";
-      const response = await fetch(`/api/chat/messages${qs}`);
+      const search = new URLSearchParams();
+      if (latestMessageId) {
+        search.set("sinceId", latestMessageId);
+      } else {
+        search.set("limit", String(snapshotLimit));
+      }
+      const qs = search.toString();
+      const response = await fetch(`/api/chat/messages${qs ? `?${qs}` : ""}`);
       const data = await response.json();
       const incoming = (data.messages ?? []) as ChatMessage[];
       if (incoming.length > 0) {
@@ -65,7 +74,7 @@ export default function HomePage() {
     es.onerror = () => setConnected(false);
 
     return () => es.close();
-  }, []);
+  }, [snapshotLimit]);
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
@@ -73,12 +82,18 @@ export default function HomePage() {
     if (!trimmed || sending) return;
 
     setSending(true);
+    setError(null);
     try {
-      await fetch("/api/chat/send", {
+      const response = await fetch("/api/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: trimmed }),
       });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        setError(payload?.error ?? "메시지 전송 실패");
+        return;
+      }
       setText("");
     } finally {
       setSending(false);
@@ -92,6 +107,18 @@ export default function HomePage() {
       <h1>🥟 Mandu Real-time Chat Demo</h1>
       <p>상태: <b>{status}</b> · API: <code>/api/chat/*</code></p>
 
+      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+        <label>
+          초기 로드 개수:&nbsp;
+          <select value={snapshotLimit} onChange={(e) => setSnapshotLimit(Number(e.target.value))}>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+        </label>
+        <small style={{ color: "#666" }}>값 변경 시 스트림을 재연결해 최근 메시지 스냅샷을 다시 가져옵니다.</small>
+      </div>
+
       <div style={{ border: "1px solid #ddd", borderRadius: 8, height: 420, overflow: "auto", padding: 12, marginBottom: 12 }}>
         {messages.map((m) => (
           <div key={m.id} style={{ marginBottom: 10 }}>
@@ -101,6 +128,8 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
+      {error ? <p style={{ color: "crimson", marginTop: 0 }}>{error}</p> : null}
 
       <form onSubmit={sendMessage} style={{ display: "flex", gap: 8 }}>
         <input

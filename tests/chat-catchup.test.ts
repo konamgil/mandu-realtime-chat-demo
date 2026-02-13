@@ -26,4 +26,15 @@ describe("chat catch-up requirements", () => {
 
     expect(result.length).toBeGreaterThan(1);
   });
+
+  it("supports limit query semantics for lightweight initial snapshot", () => {
+    addMessage({ role: "user", author: "demo-user", text: "A" });
+    addMessage({ role: "ai", author: "mandu-ai", text: "B" });
+    const last = addMessage({ role: "agent", author: "agent-observer", text: "C" });
+
+    const result = listMessages({ limit: 2 });
+
+    expect(result).toHaveLength(2);
+    expect(result[1]?.id).toBe(last.id);
+  });
 });

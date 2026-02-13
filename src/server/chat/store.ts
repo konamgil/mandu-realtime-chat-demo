@@ -15,6 +15,7 @@ interface ChatStore {
 
 interface ListMessagesOptions {
   sinceId?: string;
+  limit?: number;
 }
 
 declare global {
@@ -55,18 +56,25 @@ export function addMessage(message: Omit<ChatMessage, "id" | "createdAt">): Chat
   return next;
 }
 
+function applyLimit(messages: ChatMessage[], limit?: number): ChatMessage[] {
+  if (!limit || Number.isNaN(limit)) return messages;
+  const normalized = Math.min(Math.max(Math.trunc(limit), 1), 200);
+  return messages.slice(-normalized);
+}
+
 export function listMessages(options: ListMessagesOptions = {}): ChatMessage[] {
   const store = getChatStore();
+
   if (!options.sinceId) {
-    return [...store.messages];
+    return applyLimit([...store.messages], options.limit);
   }
 
   const sinceIndex = store.messages.findIndex((message) => message.id === options.sinceId);
   if (sinceIndex < 0) {
-    return [...store.messages];
+    return applyLimit([...store.messages], options.limit);
   }
 
-  return store.messages.slice(sinceIndex + 1);
+  return applyLimit(store.messages.slice(sinceIndex + 1), options.limit);
 }
 
 export function subscribe(listener: (message: ChatMessage) => void): () => void {
