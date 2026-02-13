@@ -42,6 +42,15 @@ bun test tests/chat-send-validation.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 01:23 KST (issue-cycle)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0123.log`
+- 결과: 전체 pass (9/9)
+- 브라우저 동작/녹화 재현 로그: `docs/logs/2026-02-14-record-demo-0123.log`
+- 결과: `Invalid hook call` / `[Mandu] FRAMEWORK_BUG`로 녹화 시나리오 중단, `artifacts/videos/*.webm` 미생성
+- 데모 기반 요구사항 도출:
+  - route contract helper 논의 전에 런타임 훅 디스패처 무결성(React 단일성/renderer 일관성) 보장이 선결 조건
+  - 철학 정합성상(무결성·아키텍처 일관성) 데모 근거 없는 신규 확장 변경은 보류, 재현 가능한 안정성 이슈를 우선 추적
+
 ### 2026-02-14 01:16 KST (issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0113.log`
 - 결과: 전체 pass (9/9)
