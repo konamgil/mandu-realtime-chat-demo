@@ -42,6 +42,15 @@ bun test tests/chat-send-validation.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 01:03 KST (issue-cycle)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-test.log`
+- 결과: 전체 pass (9/9)
+- 요구사항 검토:
+  - 입력 정책 에러코드(400/422)와 SSE catch-up 정책은 계속 framework helper 승격 근거로 유효
+  - 데모/테스트 근거 없는 신규 변경은 보류(수정 지향 금지 원칙 유지)
+- 브라우저 동작 확인/영상화: paired node 없음 + relay 미연결로 자동 화면 녹화 미수행(환경 제약)
+
+
 ### 2026-02-14 00:53 KST (issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-full.log`
 - 결과: 전체 pass (9/9)
