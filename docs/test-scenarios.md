@@ -42,6 +42,24 @@ bun test tests/chat-send-validation.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 02:36 KST (issue #3 대응)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0236.log`
+- 결과: 전체 pass (9/9)
+- 데모 재현/요구사항 도출:
+  - `bun run record:demo` 실행 시 기존에는 health 단계에서 무한 대기성 실패(`127.0.0.1` 접근)로 종료 근거가 약했음
+  - recorder 기본 URL을 `localhost`로 전환하고 health check를 `localhost/127.0.0.1` 후보로 검증하도록 개선
+  - 페이지 진입 대기를 `networkidle`에서 입력창 selector 기반으로 바꿔 SSE 환경에서 무의미한 대기 가능성을 제거
+  - 결과적으로 실패 시점이 `forSelector timeout` + 리포트 JSON으로 명확히 분리되어 재현/원인 추적 가능
+- 철학 정합성 검토:
+  - 무결성: 실패를 실패로 종료/기록해 데모 증거 체계를 보존
+  - 아키텍처 일관성: 브라우저 데모 파이프라인도 동일한 종료 시맨틱/로깅 규약 유지
+  - 재사용 우선: 환경(hostname) 차이를 recorder 내부에서 흡수해 반복 수동 진단 제거
+  - 중복 금지: 각 실행자별 임시 명령 우회 대신 공통 스크립트 단일 개선
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0236.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771004186494-failed.json`
+- 결과: React runtime 오류(`Invalid hook call` / `FRAMEWORK_BUG`)로 영상 생성은 여전히 실패. 단, 무한 대기 없이 실패 근거가 즉시 보존됨
+
+
 ### 2026-02-14 02:13 KST (issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0213.log`
 - 결과: 전체 pass (5/5)

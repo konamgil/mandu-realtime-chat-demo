@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { chromium } from "playwright";
 
-const BASE_URL = process.env.DEMO_BASE_URL ?? "http://127.0.0.1:3333";
+const BASE_URL = process.env.DEMO_BASE_URL ?? "http://localhost:3333";
 const VIDEO_DIR = join(process.cwd(), "artifacts", "videos");
 const REPORT_DIR = join(process.cwd(), "artifacts", "reports");
 const MAX_RUN_MS = 90_000;
@@ -15,16 +15,34 @@ function now() {
   return new Date().toISOString();
 }
 
+function resolveHealthCandidates(url: string) {
+  const candidates = [url];
+
+  if (url.includes("localhost")) {
+    candidates.push(url.replace("localhost", "127.0.0.1"));
+  } else if (url.includes("127.0.0.1")) {
+    candidates.push(url.replace("127.0.0.1", "localhost"));
+  }
+
+  return [...new Set(candidates)];
+}
+
 async function waitForHealth(url: string, timeoutMs = 30_000) {
   const startedAt = Date.now();
+  const candidates = resolveHealthCandidates(url);
+
   while (Date.now() - startedAt < timeoutMs) {
-    try {
-      const res = await fetch(`${url}/api/health`);
-      if (res.ok) return;
-    } catch {}
+    for (const candidate of candidates) {
+      try {
+        const res = await fetch(`${candidate}/api/health`);
+        if (res.ok) return candidate;
+      } catch {}
+    }
+
     await new Promise((r) => setTimeout(r, 500));
   }
-  throw new Error(`Health check timeout: ${url}/api/health`);
+
+  throw new Error(`Health check timeout: ${candidates.map((c) => `${c}/api/health`).join(", ")}`);
 }
 
 async function stopDev(dev: ReturnType<typeof spawn>) {
@@ -64,8 +82,8 @@ async function main() {
 
   const run = (async () => {
     steps.push("dev-started");
-    await waitForHealth(BASE_URL);
-    steps.push("health-ok");
+    const reachableBaseUrl = await waitForHealth(BASE_URL);
+    steps.push(`health-ok:${reachableBaseUrl}`);
 
     const browser = await chromium.launch({ headless: true });
     browserOpened = true;
@@ -75,7 +93,8 @@ async function main() {
     });
 
     const page = await context.newPage();
-    await page.goto(BASE_URL, { waitUntil: "networkidle" });
+    await page.goto(reachableBaseUrl, { waitUntil: "domcontentloaded" });
+    await page.waitForSelector('input[placeholder*="메시지"]', { timeout: 10_000 });
     steps.push("page-loaded");
 
     await page.fill('input[placeholder*="메시지"]', "자동화 영상 테스트 메시지");
