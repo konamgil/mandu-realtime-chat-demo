@@ -18,19 +18,50 @@ export default function HomePage() {
   const [connected, setConnected] = useState(false);
   const [sending, setSending] = useState(false);
 
+  const upsertMessages = (incoming: ChatMessage[]) => {
+    setMessages((prev) => {
+      if (!incoming.length) return prev;
+      const seen = new Set(prev.map((message) => message.id));
+      const next = [...prev];
+
+      for (const message of incoming) {
+        if (seen.has(message.id)) continue;
+        seen.add(message.id);
+        next.push(message);
+      }
+      return next;
+    });
+  };
+
   useEffect(() => {
-    fetch("/api/chat/messages")
-      .then((r) => r.json())
-      .then((d) => setMessages(d.messages ?? []))
-      .catch(() => undefined);
+    let latestMessageId: string | undefined;
+
+    const syncMissedMessages = async () => {
+      const qs = latestMessageId ? `?sinceId=${encodeURIComponent(latestMessageId)}` : "";
+      const response = await fetch(`/api/chat/messages${qs}`);
+      const data = await response.json();
+      const incoming = (data.messages ?? []) as ChatMessage[];
+      if (incoming.length > 0) {
+        latestMessageId = incoming[incoming.length - 1].id;
+      }
+      upsertMessages(incoming);
+    };
+
+    syncMissedMessages().catch(() => undefined);
 
     const es = new EventSource("/api/chat/stream");
 
-    es.addEventListener("ready", () => setConnected(true));
+    es.addEventListener("ready", () => {
+      setConnected(true);
+      syncMissedMessages().catch(() => undefined);
+    });
+
     es.addEventListener("message", (event) => {
       const payload = JSON.parse((event as MessageEvent).data) as ChatMessage;
-      setMessages((prev) => [...prev, payload]);
+      latestMessageId = payload.id;
+      upsertMessages([payload]);
     });
+
     es.onerror = () => setConnected(false);
 
     return () => es.close();
