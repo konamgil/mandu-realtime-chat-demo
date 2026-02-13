@@ -40,6 +40,14 @@ bun test tests/chat-send-validation.test.ts
   - empty text -> `400 EMPTY_TEXT`
   - >500 chars -> `422 TEXT_TOO_LONG`
 
+## 실행 이력
+
+### 2026-02-14 00:44 KST (issue-cycle)
+- Scenario A 실행 로그: `docs/logs/2026-02-14-scenario-a.log`
+- Scenario B 실행 로그: `docs/logs/2026-02-14-scenario-b.log`
+- 결과: 전체 pass (A: 3/3, B: 2/2)
+- 브라우저 동작 확인/영상화: OpenClaw browser relay 미연결로 자동 캡처 실패(환경 이슈)
+
 ## 개선 원칙
 - 시나리오는 삭제보다 개선(확장) 우선
 - 새 기능은 시나리오/검증 로그 없이 merge 금지
