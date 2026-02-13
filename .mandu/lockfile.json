@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "manduVersion": "0.0.0",
+  "configHash": "4b7f486c06f274a5",
+  "generatedAt": "2026-02-13T07:53:38.055Z",
+  "environment": "development",
+  "snapshot": {
+    "config": {
+      "createdAt": "2026-02-13T07:53:38.054Z",
+      "name": "mandu-chat-demo",
+      "version": "0.1.0"
+    },
+    "environment": "development"
+  }
+}

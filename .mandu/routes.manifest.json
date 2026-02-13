@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "routes": [
+    {
+      "id": "api-chat-messages",
+      "pattern": "/api/chat/messages",
+      "kind": "api",
+      "module": "app/api/chat/messages/route.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ]
+    },
+    {
+      "id": "api-chat-send",
+      "pattern": "/api/chat/send",
+      "kind": "api",
+      "module": "app/api/chat/send/route.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ]
+    },
+    {
+      "id": "api-chat-stream",
+      "pattern": "/api/chat/stream",
+      "kind": "api",
+      "module": "app/api/chat/stream/route.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ]
+    },
+    {
+      "id": "api-health",
+      "pattern": "/api/health",
+      "kind": "api",
+      "module": "app/api/health/route.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ]
+    },
+    {
+      "id": "index",
+      "pattern": "/",
+      "kind": "page",
+      "module": "app/page.tsx",
+      "componentModule": "app/page.tsx",
+      "layoutChain": [
+        "app/layout.tsx"
+      ]
+    }
+  ]
+}

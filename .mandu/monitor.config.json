@@ -1,0 +1,12 @@
+{
+  "output": "auto",
+  "openTerminal": true,
+  "dedupeWindowMs": 1500,
+  "flushIntervalMs": 500,
+  "summaryIntervalMs": 30000,
+  "store": {
+    "enabled": true,
+    "retentionDays": 7,
+    "maxArchived": 20
+  }
+}
