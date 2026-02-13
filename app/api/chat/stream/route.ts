@@ -1,31 +1,73 @@
 import { subscribe } from "../../../../src/server/chat/store";
 
-export function GET() {
+export function GET(request: Request) {
+  const encoder = new TextEncoder();
+  let cleanupRef: (() => void) | undefined;
+
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
-      const encoder = new TextEncoder();
-      const send = (event: string, data: unknown) => {
-        controller.enqueue(encoder.encode(`event: ${event}\n`));
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+      let closed = false;
+      let unsubscribe: (() => void) | undefined;
+      let ping: ReturnType<typeof setInterval> | undefined;
+
+      const cleanup = () => {
+        if (closed) return;
+        closed = true;
+
+        if (ping) {
+          clearInterval(ping);
+          ping = undefined;
+        }
+
+        if (unsubscribe) {
+          unsubscribe();
+          unsubscribe = undefined;
+        }
+
+        request.signal.removeEventListener("abort", onAbort);
       };
 
-      send("ready", { ok: true, ts: Date.now() });
+      const safeEnqueue = (chunk: string) => {
+        if (closed) return false;
+        try {
+          controller.enqueue(encoder.encode(chunk));
+          return true;
+        } catch {
+          cleanup();
+          return false;
+        }
+      };
 
-      const unsubscribe = subscribe((message) => {
-        send("message", message);
+      const send = (event: string, data: unknown) => {
+        if (!safeEnqueue(`event: ${event}\n`)) return false;
+        return safeEnqueue(`data: ${JSON.stringify(data)}\n\n`);
+      };
+
+      const onAbort = () => cleanup();
+      request.signal.addEventListener("abort", onAbort, { once: true });
+
+      cleanupRef = cleanup;
+
+      if (!send("ready", { ok: true, ts: Date.now() })) {
+        cleanup();
+        return;
+      }
+
+      unsubscribe = subscribe((message) => {
+        if (!send("message", message)) {
+          cleanup();
+        }
       });
 
-      const ping = setInterval(() => {
-        send("ping", { ts: Date.now() });
+      ping = setInterval(() => {
+        if (!send("ping", { ts: Date.now() })) {
+          cleanup();
+        }
       }, 15000);
-
-      (controller as unknown as { __cleanup?: () => void }).__cleanup = () => {
-        clearInterval(ping);
-        unsubscribe();
-      };
     },
     cancel() {
-      // no-op
+      // Called when client disconnects; cleanup is idempotent.
+      cleanupRef?.();
     },
   });
 
