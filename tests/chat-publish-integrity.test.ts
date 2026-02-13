@@ -28,4 +28,29 @@ describe("chat publish integrity", () => {
 
     warnSpy.mockRestore();
   });
+
+  it("detaches listener when async publish rejects", async () => {
+    const warnSpy = spyOn(console, "warn").mockImplementation(() => undefined);
+
+    subscribe(async () => {
+      throw new Error("async controller closed");
+    });
+
+    const stable = { calls: 0 };
+    subscribe(() => {
+      stable.calls += 1;
+    });
+
+    expect(() =>
+      addMessage({ role: "user", author: "demo-user", text: "async publish integrity" }),
+    ).not.toThrow();
+
+    await Promise.resolve();
+
+    expect(stable.calls).toBe(1);
+    expect(getChatStore().listeners.size).toBe(1);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    warnSpy.mockRestore();
+  });
 });

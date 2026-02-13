@@ -52,14 +52,32 @@ bun test tests/chat-publish-integrity.test.ts
 ```
 
 ### 최신 결과
-- pass: 1
+- pass: 2
 - fail: 0
 - 확인 항목:
   - throw listener 존재 시에도 `addMessage`는 정상 반환
+  - async reject listener도 자동 분리되어 unhandled 전파를 차단
   - 정상 listener는 동일 publish에서 계속 호출됨
   - 실패 listener는 자동 제거되어 후속 크래시 확산 차단
 
 ## 실행 이력
+
+### 2026-02-14 03:23 KST (issue #1 follow-up)
+- Scenario C 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0323.log`
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0323-full.log`
+- 결과: 전체 pass (11/11)
+- 데모 재현/요구사항 도출:
+  - `DEMO_AUTOSTART=1 bun run record:demo` 재실행에서 동일한 입력 selector timeout 재현
+  - 서버 로그 기준 `Invalid hook call` + `[Mandu] FRAMEWORK_BUG: resolveDispatcher().useState`가 여전히 선행 발생
+  - Scenario C 후속 요구사항: publish listener 계약은 sync throw뿐 아니라 async reject까지 격리되어야 함(리뷰 코멘트 반영)
+- 철학 정합성 검토:
+  - 무결성: async reject 경로의 unhandled 전파를 차단해 publish 연속성 유지
+  - 아키텍처 일관성: route가 아닌 chat store publish 계층 단일 계약으로 수렴
+  - 재사용 우선: 모든 listener 호출에 공통 적용되는 Promise-safe 처리
+  - 중복 금지: 개별 listener 호출부 보강 대신 중앙 publish 루프 강화
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0323.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771007114581-failed.json`
+- 결과: React runtime 오류 지속으로 신규 영상 생성 실패(실패 근거 로그/리포트 보존)
 
 ### 2026-02-14 03:03 KST (issue #83 대응)
 - Scenario A 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0303.log`

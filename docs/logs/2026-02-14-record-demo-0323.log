@@ -1,0 +1,32 @@
+$ bun run scripts/record-realtime-chat.ts
+[dev:err] $ bunx @mandujs/cli dev
+[dev:err] Resolving dependencies
+[dev:err] Resolved, downloaded and extracted [2]
+[dev:err] Saved lockfile
+[dev] 🥟 Mandu Dev Server
+[dev] ⚠️  ⚠️  Lockfile 불일치 - 경고
+   ↳ lock 갱신: mandu lock  (or bunx mandu lock)
+   ↳ 변경 확인: mandu lock --diff  (or bunx mandu lock --diff)
+[dev] 📂 라우트 스캔 중...
+[dev] ✅ 5개 라우트 발견
+[dev] 📡 API: /api/chat/messages -> api-chat-messages
+[dev] 📡 API: /api/chat/send -> api-chat-send
+[dev] 📡 API: /api/chat/stream -> api-chat-stream
+[dev] 📡 API: /api/health -> api-health
+[dev] 🎨 Layout: app/layout.tsx
+[dev] 📄 Page: / -> index 🎨
+[dev] 🥟 Mandu Dev Server running at http://localhost:3333
+📂 Static files: /public/, /.mandu/client/
+[dev] 🛡️  Architecture Guard 활성화 (mandu)
+[dev:err] Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+[dev:err] [Mandu] FRAMEWORK_BUG: null is not an object (evaluating 'resolveDispatcher().useState')
+❌ record scenario failed: forSelector: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('input[placeholder*="메시지"]') to be visible
+
+❌ report: /Users/creal3330/.openclaw/workspace/mandu-chat-demo/artifacts/reports/record-realtime-chat-1771007114581-failed.json
+[dev] 🛑 서버 종료 중...

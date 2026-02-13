@@ -1,0 +1,10 @@
+bun test v1.3.9 (cf6cdbbb)
+
+tests/chat-publish-integrity.test.ts:
+(pass) chat publish integrity > does not crash when a stale listener throws during publish [0.70ms]
+(pass) chat publish integrity > detaches listener when async publish rejects [0.72ms]
+
+ 2 pass
+ 0 fail
+ 8 expect() calls
+Ran 2 tests across 1 file. [15.00ms]

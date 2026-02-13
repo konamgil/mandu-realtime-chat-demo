@@ -8,9 +8,11 @@ export interface ChatMessage {
   createdAt: string;
 }
 
+type ChatListener = (message: ChatMessage) => void | Promise<void>;
+
 interface ChatStore {
   messages: ChatMessage[];
-  listeners: Set<(message: ChatMessage) => void>;
+  listeners: Set<ChatListener>;
 }
 
 interface ListMessagesOptions {
@@ -55,7 +57,13 @@ export function addMessage(message: Omit<ChatMessage, "id" | "createdAt">): Chat
 
   for (const listener of [...store.listeners]) {
     try {
-      listener(next);
+      const result = listener(next);
+      if (result && typeof (result as Promise<void>).catch === "function") {
+        void (result as Promise<void>).catch((error) => {
+          store.listeners.delete(listener);
+          console.warn("[chat-store] listener removed after async publish error", error);
+        });
+      }
     } catch (error) {
       // Dead listener must not crash publish path; detach to keep store integrity.
       store.listeners.delete(listener);
@@ -87,7 +95,7 @@ export function listMessages(options: ListMessagesOptions = {}): ChatMessage[] {
   return applyLimit(store.messages.slice(sinceIndex + 1), options.limit);
 }
 
-export function subscribe(listener: (message: ChatMessage) => void): () => void {
+export function subscribe(listener: ChatListener): () => void {
   const store = getChatStore();
   store.listeners.add(listener);
   return () => {
