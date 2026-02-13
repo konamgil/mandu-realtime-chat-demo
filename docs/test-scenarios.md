@@ -42,6 +42,20 @@ bun test tests/chat-send-validation.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 01:50 KST (issue-cycle)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0149.log`
+- 결과: 전체 pass (9/9)
+- 데모 재현/요구사항 도출:
+  - Scenario A/B 계약(재연결 catch-up + 입력 무결성)은 동일하게 재현됨
+  - `bun run record:demo` 재실행에서도 dev 로그 기준 `Invalid hook call` / `[Mandu] FRAMEWORK_BUG`가 재발해 브라우저 경로가 차단됨
+  - 따라서 우선 보완점은 신규 기능이 아니라 **React dispatcher/runtime 무결성 복구**
+- 철학 정합성 검토:
+  - 무결성/아키텍처: 훅 디스패처 오류를 남긴 채 기능 확장하면 철학 위반
+  - 재사용/중복 금지: route-level 임시 패치 다발보다 framework 레이어 단일 해결이 정합
+  - 결론: 데모 근거 없는 확장 변경 보류, runtime root-cause 추적 우선
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0149.log`
+- 결과: hook/runtime 오류 재현, 신규 영상 미생성
+
 ### 2026-02-14 01:43 KST (issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0143.log`
 - 결과: 전체 pass (9/9)
