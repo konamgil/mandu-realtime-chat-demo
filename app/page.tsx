@@ -79,7 +79,7 @@ export default function HomePage() {
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = text.trim();
-    if (!trimmed || sending) return;
+    if (!trimmed || sending || trimmed.length > 500) return;
 
     setSending(true);
     setError(null);
@@ -101,6 +101,7 @@ export default function HomePage() {
   }
 
   const status = useMemo(() => (connected ? "연결됨" : "연결중"), [connected]);
+  const remainingChars = 500 - text.length;
 
   return (
     <main style={{ maxWidth: 840, margin: "0 auto", padding: "24px", fontFamily: "sans-serif" }}>
@@ -131,14 +132,22 @@ export default function HomePage() {
 
       {error ? <p style={{ color: "crimson", marginTop: 0 }}>{error}</p> : null}
 
-      <form onSubmit={sendMessage} style={{ display: "flex", gap: 8 }}>
+      <form onSubmit={sendMessage} style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+              void sendMessage(e);
+            }
+          }}
           placeholder="메시지를 입력하세요"
           style={{ flex: 1, padding: 10 }}
         />
-        <button disabled={sending} style={{ padding: "10px 16px" }}>
+        <small style={{ color: remainingChars < 0 ? "crimson" : "#666", minWidth: 72, textAlign: "right" }}>
+          {remainingChars}자
+        </small>
+        <button disabled={sending || remainingChars < 0} style={{ padding: "10px 16px" }}>
           {sending ? "전송중..." : "전송"}
         </button>
       </form>
