@@ -141,6 +141,8 @@ bun test tests/chat-publish-integrity.test.ts
 - 이슈 착수:
   - 생성: `#6 Framework bug: Invalid hook call blocks demo rendering in dev`
   - 시작 댓글: `만두킹 🥟 작업 시작`
+- 병렬 분석:
+  - 전용 서브에이전트 세션 `agent:main:subagent:8c188279-cb6d-4255-bc99-6d28c294eb49`에서 원인 분석 진행 중 (코드 푸시 없음)
 
 ### 2026-02-14 06:23 KST (mandu-issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0623-full.log`
