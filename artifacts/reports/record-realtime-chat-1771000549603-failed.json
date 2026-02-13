@@ -1,0 +1,14 @@
+{
+  "scenario": "realtime-chat-smoke",
+  "baseUrl": "http://127.0.0.1:3333",
+  "startedAt": "2026-02-13T16:35:17.754Z",
+  "endedAt": "2026-02-13T16:35:49.603Z",
+  "status": "failed",
+  "browserOpened": true,
+  "steps": [
+    "dev-started",
+    "health-ok",
+    "page-loaded"
+  ],
+  "error": "fill: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('input[placeholder*=\"메시지\"]')\n"
+}

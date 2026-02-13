@@ -42,6 +42,21 @@ bun test tests/chat-send-validation.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 01:43 KST (issue-cycle)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0143.log`
+- 결과: 전체 pass (9/9)
+- 데모 재현/요구사항 도출:
+  - Scenario A/B 계약(재연결 catch-up + 입력 무결성)은 여전히 안정적으로 재현됨
+  - 브라우저 데모 smoke는 입력 박스 locator 단계에서 실패했고, dev 로그에 `Invalid hook call` / `[Mandu] FRAMEWORK_BUG`가 동일 재현됨
+  - 선행 요구사항은 기능 확장이 아니라 **React dispatcher/runtime 무결성 복구**
+- 철학 정합성 검토:
+  - 무결성/아키텍처 일관성: 런타임 훅 오류가 존재하는 상태에서 신규 기능 이슈/PR 착수 금지
+  - 재사용 우선/중복 금지: route별 우회 수정 대신 framework 레이어 원인 해결 우선
+  - 결론: 데모 근거 없는 변경 보류(수정 지향 금지 유지)
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0143.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771000549603-failed.json`
+- 결과: 시나리오 실패로 신규 영상 미생성(기존 영상만 존재: `artifacts/videos/demo-2026-02-13T16-29-45-253Z.webm`)
+
 ### 2026-02-14 01:33 KST (issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0133.log`
 - 결과: 전체 pass (9/9)
