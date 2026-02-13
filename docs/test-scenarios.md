@@ -62,6 +62,26 @@ bun test tests/chat-publish-integrity.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 08:23 KST (mandu-issue-cycle)
+- Slack 시작 공지: `C0AEQGPETQV`에 `이슈/데모 개선 시작합니다. 🥟` 전송
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0823-full.log`
+- 결과: 전체 pass (11/11)
+- 데모 재현/요구사항 도출:
+  - `bun run record:demo` 실행 시 입력 selector timeout 재현
+  - 브라우저 녹화 리포트: `artifacts/reports/record-realtime-chat-1771025138344-failed.json`
+  - 직전 재현에서 `Invalid hook call` + `[Mandu] FRAMEWORK_BUG: resolveDispatcher().useState` 확인되어 framework React runtime 단일성 보장이 선행 요구사항으로 확정
+- 철학 정합성 검토:
+  - 무결성: 데모 진입 실패(입력창 미표시) 상태에서 기능성 변경 금지
+  - 아키텍처 일관성: 앱 우회가 아닌 framework 렌더 경로 수정 우선
+  - 재사용 우선: 공통 런타임 단일성 보장으로 전 앱 재사용 가능해야 함
+  - 중복 금지: 데모별 임시 workaround 추가 금지
+- 이슈 착수:
+  - 생성: `#6 Framework bug: Invalid hook call blocks demo rendering in dev`
+  - 시작 댓글: `만두킹 🥟 작업 시작`
+- 병렬 분석:
+  - 전용 서브에이전트 세션 `agent:main:subagent:8c188279-cb6d-4255-bc99-6d28c294eb49`에서 원인 분석 진행 중 (코드 푸시 없음)
+
+
 ### 2026-02-14 06:23 KST (mandu-issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0623-full.log`
 - 결과: 전체 pass (11/11)
