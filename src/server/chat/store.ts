@@ -52,7 +52,17 @@ export function addMessage(message: Omit<ChatMessage, "id" | "createdAt">): Chat
     ...message,
   };
   store.messages.push(next);
-  for (const listener of store.listeners) listener(next);
+
+  for (const listener of [...store.listeners]) {
+    try {
+      listener(next);
+    } catch (error) {
+      // Dead listener must not crash publish path; detach to keep store integrity.
+      store.listeners.delete(listener);
+      console.warn("[chat-store] listener removed after publish error", error);
+    }
+  }
+
   return next;
 }
 

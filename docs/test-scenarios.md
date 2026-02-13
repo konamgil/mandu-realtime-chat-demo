@@ -40,7 +40,41 @@ bun test tests/chat-send-validation.test.ts
   - empty text -> `400 EMPTY_TEXT`
   - >500 chars -> `422 TEXT_TOO_LONG`
 
+## Scenario C — SSE dead listener publish 격리
+
+### 목적
+- stale listener 예외가 publish 경로를 중단시키지 않는지 확인
+- 실패 listener를 자동 분리해 listener 집합 무결성 유지
+
+### 실행 명령
+```bash
+bun test tests/chat-publish-integrity.test.ts
+```
+
+### 최신 결과
+- pass: 1
+- fail: 0
+- 확인 항목:
+  - throw listener 존재 시에도 `addMessage`는 정상 반환
+  - 정상 listener는 동일 publish에서 계속 호출됨
+  - 실패 listener는 자동 제거되어 후속 크래시 확산 차단
+
 ## 실행 이력
+
+### 2026-02-14 02:43 KST (issue #1 대응)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0243.log`
+- 결과: 전체 pass (10/10)
+- 데모 재현/요구사항 도출:
+  - SSE disconnect 반복 환경에서 stale listener 예외가 publish 경로(`/api/chat/send` 경유 addMessage)를 중단시키면 프로세스 무결성이 깨짐
+  - 따라서 publish 경로는 listener 예외를 격리하고 dead listener를 분리해야 함
+- 철학 정합성 검토:
+  - 무결성: dead listener 예외를 프로세스 경계에서 차단해 서비스 연속성 보장
+  - 아키텍처 일관성: stream route가 아닌 store publish 레이어에서 공통 방어 적용
+  - 재사용 우선: 개별 route patch가 아니라 `addMessage` 단일 경로 강화
+  - 중복 금지: 각 listener 호출부에 중복 try/catch 확산 없이 중앙 집중 처리
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0243.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771004772079-failed.json`
+- 결과: 입력 selector 대기 timeout으로 영상 생성 실패(실패 근거 JSON/로그 확보)
 
 ### 2026-02-14 02:36 KST (issue #3 대응)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0236.log`
