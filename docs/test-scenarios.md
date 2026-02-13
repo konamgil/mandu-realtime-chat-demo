@@ -279,6 +279,22 @@ bun test tests/chat-publish-integrity.test.ts
 - 결과: 전체 pass (A: 3/3, B: 2/2)
 - 브라우저 동작 확인/영상화: OpenClaw browser relay 미연결로 자동 캡처 실패(환경 이슈)
 
+### 2026-02-14 07:23 KST (mandu-issue-cycle)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0723-full.log`
+- 결과: 전체 pass (11/11)
+- 데모 재현/요구사항 도출:
+  - `bun run record:demo` 재실행에서 입력 selector timeout 재현
+  - dev 로그에서 `Invalid hook call` + `[Mandu] FRAMEWORK_BUG: resolveDispatcher().useState` 재발
+  - 요구사항 재확인: framework 렌더 경로에서 React runtime 단일성(서버 렌더러/앱 React 인스턴스 일치) 보장 전까지 기능성 변경 보류
+- 철학 정합성 검토:
+  - 무결성: 데모 진입 자체가 실패하므로 선행 복구 필요
+  - 아키텍처 일관성: 앱별 임시 patch 대신 framework 공통 계약으로 해결해야 함
+  - 재사용 우선: 모든 page route에 공통 적용 가능한 단일 수정 우선
+  - 중복 금지: 데모별 workaround 확산 금지
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0723.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771021505671-failed.json`
+- 결과: 런타임 오류 지속으로 신규 영상 생성 실패(실패 근거 로그/리포트 보존)
+
 ## 브라우저 녹화 자동화
 
 ### 1회 준비
