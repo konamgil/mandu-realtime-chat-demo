@@ -1,0 +1,13 @@
+[dev] 🥟 Mandu Dev Server
+[dev] 🔒 설정 무결성 확인됨 (781e013c)
+[dev] 📂 라우트 스캔 중...
+[dev] ✅ 5개 라우트 발견
+[dev] 📡 API: /api/chat/messages -> api-chat-messages
+[dev] 📡 API: /api/chat/send -> api-chat-send
+[dev] 📡 API: /api/chat/stream -> api-chat-stream
+[dev] 📡 API: /api/health -> api-health
+[dev] 🎨 Layout: app/layout.tsx
+  📄 Page: / -> index 🎨
+[dev] 🥟 Mandu Dev Server running at http://localhost:3333
+📂 Static files: /public/, /.mandu/client/
+[dev] 🛡️  Architecture Guard 활성화 (mandu)

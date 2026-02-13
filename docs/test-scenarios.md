@@ -49,8 +49,9 @@ bun test tests/chat-send-validation.test.ts
   - Scenario A/B(재연결 catch-up + 입력 정책)를 재현해 기존 framework 승격 요구사항(생명주기 cleanup/입력 계약 helper화)이 여전히 유효함을 확인
   - 신규 데모 근거 없이 코드 수정은 보류(수정 지향 금지)
 - 브라우저 동작/녹화:
-  - `bun run record:demo`와 `bun scripts/record-realtime-chat.ts`를 재실행했으나 자동 녹화 스크립트가 완료 신호 없이 대기 상태로 머무는 현상 재발
-  - 영상 산출물(`artifacts/videos`) 생성 실패 → 녹화 스크립트 안정화 이슈로 분리 필요
+  - 실행 로그: `docs/logs/2026-02-14-record-demo-0116.log`
+  - `bun run record:demo` 재현 중 dev 서버에서 `Invalid hook call`/`FRAMEWORK_BUG` 발생 후 녹화 시나리오 진행 불가
+  - 영상 산출물(`artifacts/videos`) 생성 실패 → 녹화 스크립트 안정화 + framework hook 오류 분리 대응 필요 (이슈 #3)
 
 ### 2026-02-14 01:03 KST (issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-test.log`
