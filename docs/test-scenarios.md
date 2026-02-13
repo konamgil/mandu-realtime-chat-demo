@@ -40,7 +40,91 @@ bun test tests/chat-send-validation.test.ts
   - empty text -> `400 EMPTY_TEXT`
   - >500 chars -> `422 TEXT_TOO_LONG`
 
+## Scenario C — SSE dead listener publish 격리
+
+### 목적
+- stale listener 예외가 publish 경로를 중단시키지 않는지 확인
+- 실패 listener를 자동 분리해 listener 집합 무결성 유지
+
+### 실행 명령
+```bash
+bun test tests/chat-publish-integrity.test.ts
+```
+
+### 최신 결과
+- pass: 2
+- fail: 0
+- 확인 항목:
+  - throw listener 존재 시에도 `addMessage`는 정상 반환
+  - async reject listener도 자동 분리되어 unhandled 전파를 차단
+  - 정상 listener는 동일 publish에서 계속 호출됨
+  - 실패 listener는 자동 제거되어 후속 크래시 확산 차단
+
 ## 실행 이력
+
+### 2026-02-14 03:23 KST (issue #1 follow-up)
+- Scenario C 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0323.log`
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0323-full.log`
+- 결과: 전체 pass (11/11)
+- 데모 재현/요구사항 도출:
+  - `DEMO_AUTOSTART=1 bun run record:demo` 재실행에서 동일한 입력 selector timeout 재현
+  - 서버 로그 기준 `Invalid hook call` + `[Mandu] FRAMEWORK_BUG: resolveDispatcher().useState`가 여전히 선행 발생
+  - Scenario C 후속 요구사항: publish listener 계약은 sync throw뿐 아니라 async reject까지 격리되어야 함(리뷰 코멘트 반영)
+- 철학 정합성 검토:
+  - 무결성: async reject 경로의 unhandled 전파를 차단해 publish 연속성 유지
+  - 아키텍처 일관성: route가 아닌 chat store publish 계층 단일 계약으로 수렴
+  - 재사용 우선: 모든 listener 호출에 공통 적용되는 Promise-safe 처리
+  - 중복 금지: 개별 listener 호출부 보강 대신 중앙 publish 루프 강화
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0323.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771007114581-failed.json`
+- 결과: React runtime 오류 지속으로 신규 영상 생성 실패(실패 근거 로그/리포트 보존)
+
+### 2026-02-14 03:03 KST (issue #83 대응)
+- Scenario A 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0303.log`
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0303-full.log`
+- 결과: 전체 pass (6/6)
+- 데모 재현/요구사항 도출:
+  - `DEMO_AUTOSTART=1 bun run record:demo` 재실행에서 입력 selector timeout 재현
+  - 서버 로그 기준 `Invalid hook call` + `[Mandu] FRAMEWORK_BUG: resolveDispatcher().useState`가 page 진입 이전에 발생
+  - 요구사항 확정: framework 렌더 경로에서 React runtime 단일성(서버 렌더러/앱 React 인스턴스 일치) 보장 전까지 기능성 변경 보류
+- 철학 정합성 검토:
+  - 무결성: 데모 진입 불가 상태를 먼저 복구해야 후속 개선이 의미 있음
+  - 아키텍처 일관성: 앱별 patch 금지, framework 공통 계약으로 처리
+  - 재사용 우선: 모든 page route에 동일하게 적용되는 단일 해결만 허용
+  - 중복 금지: 데모별 임시 workaround 확산 금지
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0303.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771005864054-failed.json`
+- 결과: 런타임 오류 지속으로 신규 영상 생성 실패(실패 근거 로그/리포트 보존)
+
+### 2026-02-14 02:59 KST (issue #83 대응)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0259.log`
+- 결과: 전체 pass (6/6)
+- 데모 재현/요구사항 도출:
+  - `bun run record:demo` 재현에서 입력 selector timeout이 반복되며, 서버 측 실제 원인은 SSR 단계 `resolveDispatcher().useState` 오류(Invalid hook call 계열)로 확인됨
+  - 프레임워크 요구사항: page route의 React runtime 단일성 보장(서버 렌더러/앱 React 인스턴스 불일치 방지)
+- 철학 정합성 검토:
+  - 무결성: 데모 진입 자체를 깨는 런타임 오류를 우선 복구해야 함
+  - 아키텍처 일관성: 앱별 우회가 아니라 framework 렌더 경로에서 단일 계약으로 보장
+  - 재사용 우선: 모든 page route에 공통 적용 가능한 수정만 허용
+  - 중복 금지: 데모별 임시 패치 확산 금지
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0259.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771005568861-failed.json`
+- 결과: runtime 이슈 미해결로 신규 영상 생성 실패(실패 근거 로그/리포트 보존)
+
+### 2026-02-14 02:43 KST (issue #1 대응)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0243.log`
+- 결과: 전체 pass (10/10)
+- 데모 재현/요구사항 도출:
+  - SSE disconnect 반복 환경에서 stale listener 예외가 publish 경로(`/api/chat/send` 경유 addMessage)를 중단시키면 프로세스 무결성이 깨짐
+  - 따라서 publish 경로는 listener 예외를 격리하고 dead listener를 분리해야 함
+- 철학 정합성 검토:
+  - 무결성: dead listener 예외를 프로세스 경계에서 차단해 서비스 연속성 보장
+  - 아키텍처 일관성: stream route가 아닌 store publish 레이어에서 공통 방어 적용
+  - 재사용 우선: 개별 route patch가 아니라 `addMessage` 단일 경로 강화
+  - 중복 금지: 각 listener 호출부에 중복 try/catch 확산 없이 중앙 집중 처리
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0243.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771004772079-failed.json`
+- 결과: 입력 selector 대기 timeout으로 영상 생성 실패(실패 근거 JSON/로그 확보)
 
 ### 2026-02-14 02:36 KST (issue #3 대응)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0236.log`
