@@ -1,0 +1,11 @@
+bun test v1.3.9 (cf6cdbbb)
+
+tests/chat-catchup.test.ts:
+(pass) chat catch-up requirements > returns only messages created after sinceId (reconnect catch-up) [1.21ms]
+(pass) chat catch-up requirements > falls back to full snapshot when sinceId is unknown [0.44ms]
+(pass) chat catch-up requirements > supports limit query semantics for lightweight initial snapshot [0.04ms]
+
+ 3 pass
+ 0 fail
+ 6 expect() calls
+Ran 3 tests across 1 file. [16.00ms]
