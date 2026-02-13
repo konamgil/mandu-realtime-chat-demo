@@ -70,7 +70,25 @@ bun test tests/chat-send-validation.test.ts
 - 결과: 전체 pass (A: 3/3, B: 2/2)
 - 브라우저 동작 확인/영상화: OpenClaw browser relay 미연결로 자동 캡처 실패(환경 이슈)
 
+## 브라우저 녹화 자동화
+
+### 1회 준비
+```bash
+bun install
+bun run record:setup
+```
+
+### 실행
+```bash
+bun run record:demo
+```
+
+### 산출물
+- 영상: `artifacts/videos/*.webm`
+- 리포트: `artifacts/reports/record-realtime-chat-*.json`
+
 ## 개선 원칙
 - 시나리오는 삭제보다 개선(확장) 우선
 - 새 기능은 시나리오/검증 로그 없이 merge 금지
 - 데모 재현 가능한 증거가 있어야 framework 요구사항으로 승격
+- 개발 완료 후 테스트 시나리오 실행 + 브라우저 영상 첨부 보고를 기본 절차로 고정

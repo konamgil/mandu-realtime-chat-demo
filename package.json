@@ -7,14 +7,16 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "dev": "bunx mandu dev",
-    "dev:safe": "bunx mandu lock && bunx mandu dev --watch",
-    "build": "bunx mandu build",
-    "start": "bunx mandu start",
-    "check": "bunx mandu check",
-    "guard": "bunx mandu guard",
-    "lock": "bunx mandu lock",
-    "test": "bun test"
+    "dev": "bunx @mandujs/cli dev",
+    "dev:safe": "bunx @mandujs/cli lock && bunx @mandujs/cli dev --watch",
+    "build": "bunx @mandujs/cli build",
+    "start": "bunx @mandujs/cli start",
+    "check": "bunx @mandujs/cli check",
+    "guard": "bunx @mandujs/cli guard",
+    "lock": "bunx @mandujs/cli lock",
+    "test": "bun test",
+    "record:setup": "bunx playwright install chromium",
+    "record:demo": "bun run scripts/record-realtime-chat.ts"
   },
   "dependencies": {
     "@mandujs/core": "^0.13.0",
@@ -25,6 +27,7 @@
     "@mandujs/cli": "^0.15.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "playwright": "^1.54.1",
     "typescript": "^5.0.0"
   }
 }
