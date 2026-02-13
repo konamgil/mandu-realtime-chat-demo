@@ -42,6 +42,19 @@ bun test tests/chat-send-validation.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 00:53 KST (issue-cycle)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-full.log`
+- 결과: 전체 pass (9/9)
+- 요구사항 도출:
+  - Route 계약(helper) 차원에서 `EMPTY_TEXT(400)` / `TEXT_TOO_LONG(422)` 같은 정책 에러를 반복 없이 선언형으로 정의할 필요
+  - SSE 재연결의 `sinceId`/snapshot fallback/limit 정책을 공통 route 계약으로 승격할 근거 확보
+- 철학 정합성 점검:
+  - 무결성: 입력 정책/에러코드가 테스트로 고정되어야 함
+  - 아키텍처 일관성: route.ts 전반 동일한 계약 패턴 필요
+  - 재사용 우선: route별 중복 검증/에러 매핑 제거 필요
+  - 중복 금지: helper 없이 각 route에 수동 구현 시 drift 위험 큼
+- 브라우저 동작 확인/영상화: OpenClaw browser relay 미연결로 자동 캡처/녹화 미수행(환경 이슈)
+
 ### 2026-02-14 00:44 KST (issue-cycle)
 - Scenario A 실행 로그: `docs/logs/2026-02-14-scenario-a.log`
 - Scenario B 실행 로그: `docs/logs/2026-02-14-scenario-b.log`
