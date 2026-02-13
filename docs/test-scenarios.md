@@ -61,6 +61,21 @@ bun test tests/chat-publish-integrity.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 02:59 KST (issue #83 대응)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0259.log`
+- 결과: 전체 pass (6/6)
+- 데모 재현/요구사항 도출:
+  - `bun run record:demo` 재현에서 입력 selector timeout이 반복되며, 서버 측 실제 원인은 SSR 단계 `resolveDispatcher().useState` 오류(Invalid hook call 계열)로 확인됨
+  - 프레임워크 요구사항: page route의 React runtime 단일성 보장(서버 렌더러/앱 React 인스턴스 불일치 방지)
+- 철학 정합성 검토:
+  - 무결성: 데모 진입 자체를 깨는 런타임 오류를 우선 복구해야 함
+  - 아키텍처 일관성: 앱별 우회가 아니라 framework 렌더 경로에서 단일 계약으로 보장
+  - 재사용 우선: 모든 page route에 공통 적용 가능한 수정만 허용
+  - 중복 금지: 데모별 임시 패치 확산 금지
+- 브라우저 동작/녹화 실행 로그: `docs/logs/2026-02-14-record-demo-0259.log`
+- 녹화 리포트: `artifacts/reports/record-realtime-chat-1771005568861-failed.json`
+- 결과: runtime 이슈 미해결로 신규 영상 생성 실패(실패 근거 로그/리포트 보존)
+
 ### 2026-02-14 02:43 KST (issue #1 대응)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0243.log`
 - 결과: 전체 pass (10/10)
