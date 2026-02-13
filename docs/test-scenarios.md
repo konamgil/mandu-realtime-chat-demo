@@ -104,8 +104,6 @@ bun test tests/chat-publish-integrity.test.ts
   - 중복 금지: 프로젝트별 임시 실행 옵션 추가 대신 단일 문서/명령 경로 유지
 - 이슈 착수:
   - issue #6 시작 댓글 추가: https://github.com/konamgil/mandu-realtime-chat-demo/issues/6#issuecomment-3901088409
-  - 병렬 분석 서브에이전트: `agent:main:subagent:9dbef25c-e675-4fa7-8dfa-5654cdffdcd0`
-
 
 ### 2026-02-14 09:23 KST (mandu-issue-cycle)
 - Slack 시작 공지: 이번 실행에서는 외부 발송 자동화 모드 제약으로 **미전송** (전송 대상: `C0AEQGPETQV`, 메시지: `이슈/데모 개선 시작합니다. 🥟`)
@@ -123,7 +121,6 @@ bun test tests/chat-publish-integrity.test.ts
   - 중복 금지: 데모별 임시 patch 확산 금지
 - 이슈 상태:
   - 작업 시작 댓글 추가: https://github.com/konamgil/mandu-realtime-chat-demo/issues/6#issuecomment-3900263581
-  - 병렬 분석 서브에이전트 시작: `agent:main:subagent:6aaeed78-c836-4b4e-9802-2da840e357d0`
 - 브라우저 동작/녹화 결과:
   - 실행 로그: `docs/logs/2026-02-14-record-demo-0923.log`
   - 결과: runtime 오류 지속으로 신규 성공 영상 미생성(실패 근거 로그/리포트 보존)
@@ -144,9 +141,6 @@ bun test tests/chat-publish-integrity.test.ts
 - 이슈 착수:
   - 생성: `#6 Framework bug: Invalid hook call blocks demo rendering in dev`
   - 시작 댓글: `만두킹 🥟 작업 시작`
-- 병렬 분석:
-  - 전용 서브에이전트 세션 `agent:main:subagent:8c188279-cb6d-4255-bc99-6d28c294eb49`에서 원인 분석 진행 중 (코드 푸시 없음)
-
 
 ### 2026-02-14 06:23 KST (mandu-issue-cycle)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0623-full.log`
