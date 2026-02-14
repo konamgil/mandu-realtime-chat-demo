@@ -405,3 +405,10 @@ DEMO_AUTOSTART=1 bun run record:demo
 - 새 기능은 시나리오/검증 로그 없이 merge 금지
 - 데모 재현 가능한 증거가 있어야 framework 요구사항으로 승격
 - 개발 완료 후 테스트 시나리오 실행 + 브라우저 영상 첨부 보고를 기본 절차로 고정
+
+## 실행 로그 업데이트 (2026-02-14 17:xx KST)
+- 실행 명령: `bun run record:demo`
+- 시나리오 결과: 성공 (`dev-started -> health-ok -> page-loaded -> scenario-done`)
+- 검증 리포트: `artifacts/reports/record-realtime-chat-1771057462017.json`
+- 화면 녹화: `artifacts/videos/2bec765e2289ec3a3b867145fcdcb226.webm`
+- 개선 포인트: 기존 실패 시나리오 섹션을 유지하고, 성공 재현 로그를 누적해 회귀 여부를 비교한다.
