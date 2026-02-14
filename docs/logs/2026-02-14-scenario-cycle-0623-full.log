@@ -1,0 +1,25 @@
+bun test v1.3.9 (cf6cdbbb)
+
+tests/example.test.ts:
+(pass) Example Tests > Basic Assertions > should pass basic equality test
+(pass) Example Tests > Basic Assertions > should pass object equality test [0.70ms]
+(pass) Example Tests > Test Helpers > should create test request [0.21ms]
+(pass) Example Tests > Test Helpers > should parse JSON response [0.28ms]
+
+tests/chat-catchup.test.ts:
+(pass) chat catch-up requirements > returns only messages created after sinceId (reconnect catch-up)
+(pass) chat catch-up requirements > falls back to full snapshot when sinceId is unknown [1.08ms]
+(pass) chat catch-up requirements > supports limit query semantics for lightweight initial snapshot [0.14ms]
+
+tests/chat-send-validation.test.ts:
+(pass) POST /api/chat/send validation > returns 400 when text is empty
+(pass) POST /api/chat/send validation > returns 422 when text exceeds 500 chars [0.76ms]
+
+tests/chat-publish-integrity.test.ts:
+(pass) chat publish integrity > does not crash when a stale listener throws during publish [0.19ms]
+(pass) chat publish integrity > detaches listener when async publish rejects [0.39ms]
+
+ 11 pass
+ 0 fail
+ 23 expect() calls
+Ran 11 tests across 4 files. [22.00ms]

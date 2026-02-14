@@ -1,0 +1,14 @@
+{
+  "scenario": "realtime-chat-smoke",
+  "baseUrl": "http://localhost:3333",
+  "startedAt": "2026-02-14T05:24:28.734Z",
+  "endedAt": "2026-02-14T05:24:32.548Z",
+  "videoDir": "/Users/creal3330/.openclaw/workspace/mandu-chat-demo/artifacts/videos",
+  "status": "ok",
+  "steps": [
+    "dev-started",
+    "health-ok:http://localhost:3333",
+    "page-loaded",
+    "scenario-done"
+  ]
+}

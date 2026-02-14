@@ -1,0 +1,24 @@
+# scenario-cycle 2026-02-14-1424
+## chat-catchup
+bun test v1.3.9 (cf6cdbbb)
+
+tests/chat-catchup.test.ts:
+(pass) chat catch-up requirements > returns only messages created after sinceId (reconnect catch-up) [0.58ms]
+(pass) chat catch-up requirements > falls back to full snapshot when sinceId is unknown [0.38ms]
+(pass) chat catch-up requirements > supports limit query semantics for lightweight initial snapshot [0.06ms]
+
+ 3 pass
+ 0 fail
+ 6 expect() calls
+Ran 3 tests across 1 file. [16.00ms]
+## chat-send-validation
+bun test v1.3.9 (cf6cdbbb)
+
+tests/chat-send-validation.test.ts:
+(pass) POST /api/chat/send validation > returns 400 when text is empty [1.18ms]
+(pass) POST /api/chat/send validation > returns 422 when text exceeds 500 chars [0.18ms]
+
+ 2 pass
+ 0 fail
+ 4 expect() calls
+Ran 2 tests across 1 file. [14.00ms]
