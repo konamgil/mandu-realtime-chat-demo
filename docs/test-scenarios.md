@@ -62,6 +62,27 @@ bun test tests/chat-publish-integrity.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 09:23 KST (mandu-issue-cycle)
+- Slack 시작 공지: 이번 실행에서는 외부 발송 자동화 모드 제약으로 **미전송** (전송 대상: `C0AEQGPETQV`, 메시지: `이슈/데모 개선 시작합니다. 🥟`)
+- Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0923-full.log`
+- 결과: 전체 pass (11/11)
+- 데모 재현/요구사항 도출:
+  - `DEMO_AUTOSTART=1 bun run record:demo` 재실행에서 입력 selector timeout 재현
+  - dev 로그에서 `Invalid hook call` + `[Mandu] FRAMEWORK_BUG: resolveDispatcher().useState` 재발
+  - 녹화 실패 리포트: `artifacts/reports/record-realtime-chat-1771028664415-failed.json`
+  - 요구사항 유지: framework 렌더 경로의 React runtime 단일성 보장 전까지 기능성 변경 보류
+- 철학 정합성 검토:
+  - 무결성: 데모 진입 불가(runtime hook 오류) 상태 우선 복구
+  - 아키텍처 일관성: 앱별 workaround 금지, framework 공통 계약으로 해결
+  - 재사용 우선: 모든 page route에 공통 적용 가능한 단일 수정 우선
+  - 중복 금지: 데모별 임시 patch 확산 금지
+- 이슈 상태:
+  - 작업 시작 댓글 추가: https://github.com/konamgil/mandu-realtime-chat-demo/issues/6#issuecomment-3900263581
+  - 병렬 분석 서브에이전트 시작: `agent:main:subagent:6aaeed78-c836-4b4e-9802-2da840e357d0`
+- 브라우저 동작/녹화 결과:
+  - 실행 로그: `docs/logs/2026-02-14-record-demo-0923.log`
+  - 결과: runtime 오류 지속으로 신규 성공 영상 미생성(실패 근거 로그/리포트 보존)
+
 ### 2026-02-14 08:23 KST (mandu-issue-cycle)
 - Slack 시작 공지: `C0AEQGPETQV`에 `이슈/데모 개선 시작합니다. 🥟` 전송
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0823-full.log`
