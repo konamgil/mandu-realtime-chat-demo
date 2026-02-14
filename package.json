@@ -19,13 +19,13 @@
     "record:demo": "bun run scripts/record-realtime-chat.ts"
   },
   "dependencies": {
-    "@mandujs/core": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/core",
+    "@mandujs/core": "^0.13.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@mandujs/ate": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/ate",
-    "@mandujs/cli": "^0.15.1",
+    "@mandujs/cli": "^0.15.4",
     "@playwright/test": "^1.58.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
