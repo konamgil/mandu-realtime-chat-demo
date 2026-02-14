@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import LoginScreen from "./components/login-screen";
+import { clearStoredSession, getStoredSession, type AuthSession } from "./lib/auth";
 
 type ChatRole = "user" | "ai" | "agent";
 
@@ -13,12 +15,17 @@ type ChatMessage = {
 };
 
 export default function HomePage() {
+  const [session, setSession] = useState<AuthSession | null | undefined>(undefined);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   const [connected, setConnected] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [snapshotLimit, setSnapshotLimit] = useState<number>(50);
+
+  useEffect(() => {
+    setSession(getStoredSession());
+  }, []);
 
   const upsertMessages = (incoming: ChatMessage[]) => {
     setMessages((prev) => {
@@ -36,6 +43,11 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    if (!session) {
+      setConnected(false);
+      return;
+    }
+
     setMessages([]);
     let latestMessageId: string | undefined;
 
@@ -74,12 +86,12 @@ export default function HomePage() {
     es.onerror = () => setConnected(false);
 
     return () => es.close();
-  }, [snapshotLimit]);
+  }, [session, snapshotLimit]);
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = text.trim();
-    if (!trimmed || sending || trimmed.length > 500) return;
+    if (!trimmed || sending || trimmed.length > 500 || !session) return;
 
     setSending(true);
     setError(null);
@@ -103,10 +115,26 @@ export default function HomePage() {
   const status = useMemo(() => (connected ? "연결됨" : "연결중"), [connected]);
   const remainingChars = 500 - text.length;
 
+  if (session === undefined) {
+    return null;
+  }
+
+  if (!session) {
+    return (
+      <LoginScreen
+        title="🥟 Mandu Chat Demo 로그인"
+        description="로그인 후 실시간 채팅 데모를 사용할 수 있습니다."
+        onLogin={(nextSession) => setSession(nextSession)}
+      />
+    );
+  }
+
   return (
     <main style={{ maxWidth: 840, margin: "0 auto", padding: "24px", fontFamily: "sans-serif" }}>
       <h1>🥟 Mandu Real-time Chat Demo</h1>
-      <p>상태: <b>{status}</b> · API: <code>/api/chat/*</code></p>
+      <p>
+        상태: <b>{status}</b> · 사용자: <b>{session.name}</b> ({session.email}) · API: <code>/api/chat/*</code>
+      </p>
 
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
         <label>
@@ -117,6 +145,17 @@ export default function HomePage() {
             <option value={100}>100</option>
           </select>
         </label>
+        <button
+          type="button"
+          onClick={() => {
+            clearStoredSession();
+            setSession(null);
+            setMessages([]);
+            setText("");
+          }}
+        >
+          로그아웃
+        </button>
         <small style={{ color: "#666" }}>값 변경 시 스트림을 재연결해 최근 메시지 스냅샷을 다시 가져옵니다.</small>
       </div>
 
