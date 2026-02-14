@@ -1,0 +1,6 @@
+# Local-only / generated
+.mandu/history/
+.mandu/spec.lock.json
+
+# ATE is linked locally via file: (contains absolute-path symlinks)
+node_modules/@mandujs/ate/
