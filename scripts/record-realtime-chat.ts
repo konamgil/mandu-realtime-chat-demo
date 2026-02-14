@@ -67,7 +67,7 @@ async function main() {
   const steps: string[] = [];
   let browserOpened = false;
 
-  const dev = spawn("bun", ["run", "dev"], {
+  const dev = spawn("bun", ["run", "dev:safe"], {
     stdio: ["ignore", "pipe", "pipe"],
   });
 

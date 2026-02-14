@@ -62,6 +62,30 @@ bun test tests/chat-publish-integrity.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 15:23 KST (mandu-issue-cycle)
+- Slack 시작 공지: `C0AEQGPETQV`에 `이슈/데모 개선 시작합니다. 🥟` 전송 완료
+- Scenario A/B/C 재현 로그: `docs/logs/2026-02-14-1523-scenario-cycle.log`
+- 변경 후 회귀 로그: `docs/logs/2026-02-14-1523-scenario-cycle-safe-change.log`
+- 결과: pass (7/7, 변경 후 7/7)
+- 데모 재현/브라우저 녹화:
+  - 실행 로그: `docs/logs/2026-02-14-1523-record-demo.log`
+  - safe 경로 재검증 로그: `docs/logs/2026-02-14-1523-record-demo-safe.log`
+  - 리포트: `artifacts/reports/record-realtime-chat-1771050268741.json`, `artifacts/reports/record-realtime-chat-1771050348735.json`
+- 도출 요구사항(데모 우선):
+  - recorder 자동 기동이 `mandu dev` 단일 경로일 때 lockfile 불일치 경고가 반복되어 재현 경로 무결성이 흔들림
+  - `record:demo` 자동 기동은 `dev:safe`(`mandu lock && mandu dev --watch`)를 강제해야 동일 입력→동일 재현을 보장 가능
+- 철학 정합성 검토:
+  - 무결성: lock 갱신 후 실행 경로를 표준화해 재현 오염 차단
+  - 아키텍처 일관성: 데모 파이프라인이 프로젝트 표준 실행 계약을 직접 사용
+  - 재사용 우선: 모든 실행자가 동일 스크립트로 재현 가능
+  - 중복 금지: 수동 안내/우회 대신 recorder 단일 코드 경로로 수렴
+- 이슈/작업:
+  - 생성: `#8 Demo reproducibility: record script should use dev:safe to enforce lock-consistent startup`
+  - 시작 댓글: `만두킹 🥟 작업 시작`
+  - 병렬 분석 서브에이전트: `agent:main:subagent:3372481c-b70f-4a7d-8e644d7f9241`
+- 구현:
+  - `scripts/record-realtime-chat.ts`의 dev spawn 경로를 `bun run dev` → `bun run dev:safe`로 변경
+
 ### 2026-02-14 14:24 KST (mandu-issue-cycle)
 - Slack 시작 공지: `C0AEQGPETQV`에 `이슈/데모 개선 시작합니다. 🥟` 전송 완료
 - Scenario A/B 재현 로그: `docs/logs/2026-02-14-1424-scenario-cycle.log`
