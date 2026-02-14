@@ -7,27 +7,29 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "dev": "bunx @mandujs/cli dev",
-    "dev:safe": "bunx @mandujs/cli lock && bunx @mandujs/cli dev --watch",
-    "build": "bunx @mandujs/cli build",
-    "start": "bunx @mandujs/cli start",
-    "check": "bunx @mandujs/cli check",
-    "guard": "bunx @mandujs/cli guard",
-    "lock": "bunx @mandujs/cli lock",
+    "dev": "PORT=3333 mandu dev",
+    "dev:safe": "mandu lock && mandu dev --watch",
+    "build": "mandu build",
+    "start": "mandu start",
+    "check": "mandu check",
+    "guard": "mandu guard",
+    "lock": "mandu lock",
     "test": "bun test",
     "record:setup": "bunx playwright install chromium",
     "record:demo": "bun run scripts/record-realtime-chat.ts"
   },
   "dependencies": {
-    "@mandujs/core": "^0.13.0",
+    "@mandujs/core": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/core",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@mandujs/ate": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/ate",
     "@mandujs/cli": "^0.15.1",
+    "@playwright/test": "^1.58.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "playwright": "^1.54.1",
+    "playwright": "^1.58.2",
     "typescript": "^5.0.0"
   }
 }
