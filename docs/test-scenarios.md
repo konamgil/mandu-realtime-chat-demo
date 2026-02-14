@@ -62,6 +62,27 @@ bun test tests/chat-publish-integrity.test.ts
 
 ## 실행 이력
 
+### 2026-02-14 14:24 KST (mandu-issue-cycle)
+- Slack 시작 공지: `C0AEQGPETQV`에 `이슈/데모 개선 시작합니다. 🥟` 전송 완료
+- Scenario A/B 재현 로그: `docs/logs/2026-02-14-1424-scenario-cycle.log`
+- 결과: pass (5/5)
+- 데모 재현/브라우저 녹화:
+  - 실행 로그: `docs/logs/2026-02-14-1424-record-demo.log`
+  - 리포트: `artifacts/reports/record-realtime-chat-1771046672548.json`
+  - 영상: `artifacts/videos/f4b4f8d6df84a8a48a1a900bb02e32cb.webm`
+- 도출 요구사항(데모 우선):
+  - route 계약 helper 확장보다 먼저, dev 시작 시 lockfile 불일치 경고를 일관된 실행 경로(`mandu lock && mandu dev --watch`)로 고정해 재현 오염을 줄일 필요
+  - 이는 기능 추가가 아니라 데모 무결성(동일 입력→동일 재현) 보장을 위한 프레임워크/워크플로 요구사항
+- 철학 정합성 검토:
+  - 무결성: 시나리오/녹화가 모두 통과하는 재현 경로를 기준선으로 고정
+  - 아키텍처 일관성: demo 스크립트가 동일한 dev 실행 계약을 강제해야 함
+  - 재사용 우선: 모든 데모 프로젝트에서 재사용 가능한 실행 가드 우선
+  - 중복 금지: 프로젝트별 임시 실행 옵션 추가 대신 단일 문서/명령 경로 유지
+- 이슈 착수:
+  - issue #6 시작 댓글 추가: https://github.com/konamgil/mandu-realtime-chat-demo/issues/6#issuecomment-3901088409
+  - 병렬 분석 서브에이전트: `agent:main:subagent:9dbef25c-e675-4fa7-8dfa-5654cdffdcd0`
+
+
 ### 2026-02-14 09:23 KST (mandu-issue-cycle)
 - Slack 시작 공지: 이번 실행에서는 외부 발송 자동화 모드 제약으로 **미전송** (전송 대상: `C0AEQGPETQV`, 메시지: `이슈/데모 개선 시작합니다. 🥟`)
 - Full regression 실행 로그: `docs/logs/2026-02-14-scenario-cycle-0923-full.log`
