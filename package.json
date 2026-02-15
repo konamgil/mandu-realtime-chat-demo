@@ -23,22 +23,18 @@
     "test:ate:e2e": "bun run scripts/run-ate-e2e.ts"
   },
   "dependencies": {
-    "@mandujs/core": "^0.18.1",
+    "@mandujs/core": "file:../mandu/packages/core",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@mandujs/ate": "^0.17.0",
-    "@mandujs/cli": "^0.18.0",
+    "@mandujs/ate": "file:../mandu/packages/ate",
+    "@mandujs/cli": "file:../mandu/packages/cli",
     "@playwright/test": "^1.58.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "playwright": "^1.58.2",
     "typescript": "^5.0.0"
   },
-  "overrides": {
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "@mandujs/ate": "0.17.0"
-  }
+  "overrides": {}
 }

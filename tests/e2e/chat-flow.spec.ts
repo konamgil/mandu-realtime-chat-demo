@@ -68,6 +68,7 @@ test.describe("e2e: login → chat → send → UI reflect (+ SSE reconnect catc
     await expect(page.getByText(/상태:/)).toContainText("연결됨", { timeout: 20_000 });
 
     // Catch-up can arrive via either: reconnected SSE or the ready→syncMissedMessages fetch.
-    await expect(page.getByText(missedMessage)).toBeVisible({ timeout: 20_000 });
+    // NOTE: strict mode can fail if the same text appears in multiple places (e.g., AI echo).
+    await expect(page.getByText(missedMessage, { exact: true }).first()).toBeVisible({ timeout: 20_000 });
   });
 });
