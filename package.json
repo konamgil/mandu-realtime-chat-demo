@@ -23,13 +23,13 @@
     "test:ate:e2e": "bun run scripts/run-ate-e2e.ts"
   },
   "dependencies": {
-    "@mandujs/core": "^0.16.0",
+    "@mandujs/core": "^0.18.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@mandujs/ate": "^0.17.0",
-    "@mandujs/cli": "^0.17.0",
+    "@mandujs/cli": "^0.18.0",
     "@playwright/test": "^1.58.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
