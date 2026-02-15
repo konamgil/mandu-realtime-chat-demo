@@ -5,13 +5,13 @@
     "": {
       "name": "mandu-chat-demo",
       "dependencies": {
-        "@mandujs/core": "^0.13.2",
+        "@mandujs/core": "^0.16.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
       },
       "devDependencies": {
         "@mandujs/ate": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/ate",
-        "@mandujs/cli": "^0.15.4",
+        "@mandujs/cli": "^0.17.0",
         "@playwright/test": "^1.58.2",
         "@types/react": "^19.2.0",
         "@types/react-dom": "^19.2.0",
@@ -20,14 +20,17 @@
       },
     },
   },
+  "overrides": {
+    "@mandujs/ate": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/ate",
+  },
   "packages": {
     "@isaacs/cliui": ["@isaacs/cliui@9.0.0", "", {}, "sha512-AokJm4tuBHillT+FpMtxQ60n8ObyXBatq7jD2/JA9dxbDDokKQm8KMht5ibGzLVU9IJDIKK4TPKgMHEYMn3lMg=="],
 
     "@mandujs/ate": ["@mandujs/ate@file:../mandu/packages/ate", { "dependencies": { "fast-glob": "^3.3.2", "ts-morph": "^26.0.0" }, "peerDependencies": { "@playwright/test": ">=1.40.0", "playwright": ">=1.40.0" } }],
 
-    "@mandujs/cli": ["@mandujs/cli@0.15.4", "", { "dependencies": { "@mandujs/core": "^0.13.2", "cfonts": "^3.3.0" }, "bin": { "mandu": "src/main.ts" } }, "sha512-0Fu8X12jqZ6i2fYjgGN/pIFwzQdjVg5Yrar3lLi6SpGxOavwzAm5TYUTT9gClmRG2pzAllvyQmmcF5jyUNcrFQ=="],
+    "@mandujs/cli": ["@mandujs/cli@0.17.0", "", { "dependencies": { "@mandujs/ate": "0.16.0", "@mandujs/core": "^0.16.0", "cfonts": "^3.3.0" }, "bin": { "mandu": "src/main.ts" } }, "sha512-Q3e0cgIHRg3S+HOx97RsQvtqVU0T1KCnrQfx93+1EznBiRltce+8caRNI2cIs2HiKGDpRwU7tsZFUv7RhPNniw=="],
 
-    "@mandujs/core": ["@mandujs/core@0.13.2", "", { "dependencies": { "chokidar": "^5.0.0", "fast-glob": "^3.3.2", "glob": "^13.0.0", "minimatch": "^10.1.1", "ollama": "^0.6.3" }, "peerDependencies": { "react": "^19.0.0", "react-dom": "^19.0.0", "zod": ">=3.0.0" } }, "sha512-Ylcr1wQOUoY6N/Oky2IyuxybqM97vNRMeaQE912QtIsDKXO20RANKDWw/YSo1sU6YPLO4RV2qRlZoYmXKhGH3Q=="],
+    "@mandujs/core": ["@mandujs/core@0.16.0", "", { "dependencies": { "chokidar": "^5.0.0", "fast-glob": "^3.3.2", "glob": "^13.0.0", "minimatch": "^10.1.1", "ollama": "^0.6.3" }, "peerDependencies": { "react": "^19.0.0", "react-dom": "^19.0.0", "zod": ">=3.0.0" } }, "sha512-eAPuvK+copggKGEwXWyvi5XhLyuCy+0Rto9i2wDHFHVXs6q0Xdkoz9q79a3WwYxxlJAj4z9hyzJqnQC8hcQLSA=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
@@ -144,6 +147,8 @@
     "window-size": ["window-size@1.1.1", "", { "dependencies": { "define-property": "^1.0.0", "is-number": "^3.0.0" }, "bin": { "window-size": "cli.js" } }, "sha512-5D/9vujkmVQ7pSmc0SCBmHXbkv6eaHwXEx65MywhmUMsI8sGqJ972APq1lotfcwMKPFLuCFfL8xGHLIp7jaBmA=="],
 
     "zod": ["zod@4.3.6", "", {}, "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="],
+
+    "@mandujs/cli/@mandujs/ate": ["@mandujs/ate@file:/Users/creal3330/.openclaw/workspace/mandu/packages/ate", {}],
 
     "to-regex-range/is-number": ["is-number@7.0.0", "", {}, "sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng=="],
   }
