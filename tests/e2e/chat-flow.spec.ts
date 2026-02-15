@@ -50,7 +50,7 @@ test.describe("e2e: login → chat → send → UI reflect (+ SSE reconnect catc
     const uiMessage = `e2e-ui-${Date.now()}`;
     await page.getByPlaceholder("메시지를 입력하세요").fill(uiMessage);
     await page.getByRole("button", { name: "전송" }).click();
-    await expect(page.getByText(uiMessage)).toBeVisible();
+    await expect(page.getByText(uiMessage, { exact: true })).toBeVisible();
 
     // 5) (Best-effort) SSE reconnect + catch-up:
     // Force network offline so EventSource disconnects, publish a message while disconnected,
