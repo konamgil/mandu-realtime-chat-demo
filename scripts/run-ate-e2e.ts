@@ -49,14 +49,11 @@ async function main() {
 
   console.log(`[ATE-E2E] baseUrl=${baseUrl}`);
 
-  // Ensure routes manifest is up-to-date (prevents SPEC_ROUTE_NOT_FOUND drift)
-  await runCommand("routes:generate", "bun", ["run", "routes:generate"], {});
-
-  // Refresh lockfile (config hash mismatch is noisy in CI)
-  await runCommand("lock", "bun", ["run", "lock"], {});
-
-  // Start dev server (lock-consistent)
-  const dev = spawn("bun", ["run", "dev"], {
+  // Start dev server.
+  // NOTE: `mandu dev` performs FS Routes scanning on startup.
+  // We intentionally avoid running `routes generate` as a separate step because
+  // in some environments it can keep the process alive (non-exiting).
+  const dev = spawn("bun", ["run", "dev:safe"], {
     stdio: "inherit",
     env: { ...process.env, PORT: String(port) },
     shell: false,
