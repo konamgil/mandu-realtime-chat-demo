@@ -24,7 +24,7 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@mandujs/ate": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/ate",
+    "@mandujs/ate": "^0.17.0",
     "@mandujs/cli": "^0.17.0",
     "@playwright/test": "^1.58.2",
     "@types/react": "^19.2.0",
@@ -33,6 +33,6 @@
     "typescript": "^5.0.0"
   },
   "overrides": {
-    "@mandujs/ate": "file:/Users/creal3330/.openclaw/workspace/mandu/packages/ate"
+    "@mandujs/ate": "0.17.0"
   }
 }
