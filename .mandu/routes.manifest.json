@@ -54,6 +54,16 @@
       ]
     },
     {
+      "id": "login",
+      "pattern": "/login",
+      "kind": "page",
+      "module": "app/login/page.tsx",
+      "componentModule": "app/login/page.tsx",
+      "layoutChain": [
+        "app/layout.tsx"
+      ]
+    },
+    {
       "id": "index",
       "pattern": "/",
       "kind": "page",

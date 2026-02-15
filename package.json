@@ -7,16 +7,20 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "dev": "PORT=3333 mandu dev",
-    "dev:safe": "mandu lock && mandu dev --watch",
-    "build": "mandu build",
-    "start": "mandu start",
-    "check": "mandu check",
-    "guard": "mandu guard",
-    "lock": "mandu lock",
-    "test": "bun test",
+    "routes:generate": "./node_modules/.bin/mandu routes generate",
+    "dev": "PORT=3333 ./node_modules/.bin/mandu dev",
+    "dev:safe": "./node_modules/.bin/mandu lock && PORT=3333 ./node_modules/.bin/mandu dev --watch",
+    "build": "./node_modules/.bin/mandu build",
+    "start": "./node_modules/.bin/mandu start",
+    "check": "./node_modules/.bin/mandu check",
+    "guard": "./node_modules/.bin/mandu guard",
+    "lock": "./node_modules/.bin/mandu lock", 
+    "test": "bun test tests/*.test.ts",
+    "test:unit": "bun test tests/*.test.ts",
+    "test:e2e": "bunx playwright test",
     "record:setup": "bunx playwright install chromium",
-    "record:demo": "bun run scripts/record-realtime-chat.ts"
+    "record:demo": "bun run scripts/record-realtime-chat.ts",
+    "test:ate:e2e": "bun run scripts/run-ate-e2e.ts"
   },
   "dependencies": {
     "@mandujs/core": "^0.16.0",

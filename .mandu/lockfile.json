@@ -1,15 +1,13 @@
 {
   "schemaVersion": 1,
   "manduVersion": "0.0.0",
-  "configHash": "4b7f486c06f274a5",
-  "generatedAt": "2026-02-13T07:53:38.055Z",
+  "configHash": "781e013cd0060f68",
+  "generatedAt": "2026-02-15T02:25:23.231Z",
   "environment": "development",
-  "snapshot": {
-    "config": {
-      "createdAt": "2026-02-13T07:53:38.054Z",
-      "name": "mandu-chat-demo",
-      "version": "0.1.0"
-    },
-    "environment": "development"
+  "mcpConfigHash": "0bef900b8278b04d",
+  "mcpServers": {
+    "mandu": {
+      "hash": "02424b76be6e0bdd"
+    }
   }
 }

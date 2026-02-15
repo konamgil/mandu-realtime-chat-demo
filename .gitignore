@@ -1,3 +1,12 @@
 # Local-only / generated
 .mandu/history/
 .mandu/spec.lock.json
+
+# ATE runtime artifacts
+.mandu/reports/
+.mandu/scenarios/
+.mandu/interaction-graph.json
+
+# Playwright outputs
+/test-results/
+/playwright-report/

@@ -60,6 +60,22 @@ bun test tests/chat-publish-integrity.test.ts
   - 정상 listener는 동일 publish에서 계속 호출됨
   - 실패 listener는 자동 제거되어 후속 크래시 확산 차단
 
+## Scenario D — ATE E2E (dev auto-start + extract→generate→run→report)
+
+### 목적
+- 데모 서버를 자동 기동한 뒤 ATE 파이프라인을 원샷으로 관통
+- 결과물(`.mandu/reports/<run-id>/summary.json`) 생성까지 확인
+
+### 실행 명령
+```bash
+bun run test:ate:e2e
+```
+
+### 성공 기준
+- dev 서버 자동 기동 성공 (`/api/health` OK)
+- `mandu test:auto --ci --base-url <url>` 실행 성공
+- `.mandu/reports/<run-id>/summary.json` 생성
+
 ## 실행 이력
 
 ### 2026-02-14 15:23 KST (mandu-issue-cycle)
