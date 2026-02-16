@@ -59,6 +59,12 @@
       "kind": "page",
       "module": "app/login/page.tsx",
       "componentModule": "app/login/page.tsx",
+      "clientModule": "app/login/page.tsx",
+      "hydration": {
+        "strategy": "island",
+        "priority": "visible",
+        "preload": false
+      },
       "layoutChain": [
         "app/layout.tsx"
       ]
@@ -69,6 +75,12 @@
       "kind": "page",
       "module": "app/page.tsx",
       "componentModule": "app/page.tsx",
+      "clientModule": "app/page.island.tsx",
+      "hydration": {
+        "strategy": "island",
+        "priority": "visible",
+        "preload": false
+      },
       "layoutChain": [
         "app/layout.tsx"
       ]

@@ -14,18 +14,22 @@ type ChatMessage = {
   createdAt: string;
 };
 
+function getInitialSession(): AuthSession | null {
+  if (typeof window === "undefined") {
+    // SSR에서는 localStorage에 접근할 수 없으므로 로그인 화면을 기본 쉘로 렌더링한다.
+    return null;
+  }
+  return getStoredSession();
+}
+
 export default function HomePageClient() {
-  const [session, setSession] = useState<AuthSession | null | undefined>(undefined);
+  const [session, setSession] = useState<AuthSession | null>(getInitialSession);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   const [connected, setConnected] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [snapshotLimit, setSnapshotLimit] = useState<number>(50);
-
-  useEffect(() => {
-    setSession(getStoredSession());
-  }, []);
 
   const upsertMessages = (incoming: ChatMessage[]) => {
     setMessages((prev) => {
@@ -114,10 +118,6 @@ export default function HomePageClient() {
 
   const status = useMemo(() => (connected ? "연결됨" : "연결중"), [connected]);
   const remainingChars = 500 - text.length;
-
-  if (session === undefined) {
-    return null;
-  }
 
   if (!session) {
     return (
