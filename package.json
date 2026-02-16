@@ -14,7 +14,7 @@
     "start": "./node_modules/.bin/mandu start",
     "check": "./node_modules/.bin/mandu check",
     "guard": "./node_modules/.bin/mandu guard",
-    "lock": "./node_modules/.bin/mandu lock", 
+    "lock": "./node_modules/.bin/mandu lock",
     "test": "bun test tests/*.test.ts",
     "test:unit": "bun test tests/*.test.ts",
     "test:e2e": "bunx playwright test",
@@ -23,18 +23,18 @@
     "test:ate:e2e": "bun run scripts/run-ate-e2e.ts"
   },
   "dependencies": {
-    "@mandujs/core": "file:../mandu/packages/core",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "@mandujs/core": "^0.18.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@mandujs/ate": "file:../mandu/packages/ate",
-    "@mandujs/cli": "file:../mandu/packages/cli",
+    "@mandujs/ate": "^0.17.0",
+    "@mandujs/cli": "^0.18.2",
     "@playwright/test": "^1.58.2",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "playwright": "^1.58.2",
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.3"
   },
   "overrides": {}
 }
