@@ -1,12 +1,4 @@
-export type ChatRole = "user" | "ai" | "agent";
-
-export interface ChatMessage {
-  id: string;
-  role: ChatRole;
-  author: string;
-  text: string;
-  createdAt: string;
-}
+import type { ChatMessage, ChatRole } from "../../shared/types/chat";
 
 type ChatListener = (message: ChatMessage) => void | Promise<void>;
 

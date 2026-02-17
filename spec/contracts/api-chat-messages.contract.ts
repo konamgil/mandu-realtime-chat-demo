@@ -4,18 +4,7 @@
 
 import { z } from "zod";
 import { Mandu } from "@mandujs/core";
-
-// ============================================
-// 🥟 Schema Definitions
-// ============================================
-
-const ChatMessageSchema = z.object({
-  id: z.string(),
-  role: z.enum(["user", "ai", "agent"]),
-  author: z.string(),
-  text: z.string(),
-  createdAt: z.string(),
-});
+import { ChatMessageSchema } from "../../src/shared/types/chat";
 
 // ============================================
 // 📜 Contract Definition

@@ -5,33 +5,35 @@
       "id": "api-chat-messages",
       "pattern": "/api/chat/messages",
       "kind": "api",
-      "module": "app/api/chat/messages/route.ts",
+      "module": "app\\api\\chat\\messages\\route.ts",
       "methods": [
         "GET",
         "POST",
         "PUT",
         "PATCH",
         "DELETE"
-      ]
+      ],
+      "contractModule": "spec/contracts/api-chat-messages.contract.ts"
     },
     {
       "id": "api-chat-send",
       "pattern": "/api/chat/send",
       "kind": "api",
-      "module": "app/api/chat/send/route.ts",
+      "module": "app\\api\\chat\\send\\route.ts",
       "methods": [
         "GET",
         "POST",
         "PUT",
         "PATCH",
         "DELETE"
-      ]
+      ],
+      "contractModule": "spec/contracts/api-chat-send.contract.ts"
     },
     {
       "id": "api-chat-stream",
       "pattern": "/api/chat/stream",
       "kind": "api",
-      "module": "app/api/chat/stream/route.ts",
+      "module": "app\\api\\chat\\stream\\route.ts",
       "methods": [
         "GET",
         "POST",
@@ -44,45 +46,46 @@
       "id": "api-health",
       "pattern": "/api/health",
       "kind": "api",
-      "module": "app/api/health/route.ts",
+      "module": "app\\api\\health\\route.ts",
       "methods": [
         "GET",
         "POST",
         "PUT",
         "PATCH",
         "DELETE"
-      ]
+      ],
+      "contractModule": "spec/contracts/api-health.contract.ts"
     },
     {
       "id": "login",
       "pattern": "/login",
       "kind": "page",
-      "module": "app/login/page.tsx",
-      "componentModule": "app/login/page.tsx",
-      "clientModule": "app/login/page.tsx",
+      "module": "app\\login\\page.tsx",
+      "componentModule": "app\\login\\page.tsx",
+      "clientModule": "app\\login\\page.island.tsx",
       "hydration": {
         "strategy": "island",
         "priority": "visible",
         "preload": false
       },
       "layoutChain": [
-        "app/layout.tsx"
+        "app\\layout.tsx"
       ]
     },
     {
       "id": "index",
       "pattern": "/",
       "kind": "page",
-      "module": "app/page.tsx",
-      "componentModule": "app/page.tsx",
-      "clientModule": "app/page.island.tsx",
+      "module": "app\\page.tsx",
+      "componentModule": "app\\page.tsx",
+      "clientModule": "app\\page.island.tsx",
       "hydration": {
         "strategy": "island",
         "priority": "visible",
         "preload": false
       },
       "layoutChain": [
-        "app/layout.tsx"
+        "app\\layout.tsx"
       ]
     }
   ]
