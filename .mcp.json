@@ -3,7 +3,7 @@
     "mandu": {
       "command": "bunx",
       "args": [
-        "@mandujs/mcp"
+        "mandu-mcp"
       ],
       "cwd": "."
     }

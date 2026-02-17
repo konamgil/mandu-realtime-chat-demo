@@ -69,7 +69,7 @@
         "preload": false
       },
       "layoutChain": [
-        "app\\layout.tsx"
+        "app/layout.tsx"
       ]
     },
     {
@@ -85,7 +85,7 @@
         "preload": false
       },
       "layoutChain": [
-        "app\\layout.tsx"
+        "app/layout.tsx"
       ]
     }
   ]
