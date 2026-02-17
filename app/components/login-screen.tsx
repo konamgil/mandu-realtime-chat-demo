@@ -9,8 +9,37 @@ type LoginScreenProps = {
   onLogin?: (session: AuthSession) => void;
 };
 
+function IconMandu({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <ellipse cx="16" cy="19" rx="13" ry="9" fill="rgba(255,255,255,0.95)" />
+      <path d="M3 19 C3 9 9 5 16 5 C23 5 29 9 29 19" fill="rgba(255,255,255,0.95)" />
+      <path d="M6 17 Q16 11 26 17" stroke="#e8967a" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <ellipse cx="16" cy="19" rx="13" ry="9" stroke="#d97706" strokeWidth="1.5" fill="none" />
+    </svg>
+  );
+}
+
+function IconLightbulb({ size = 13 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle" }}>
+      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+      <path d="M9 18h6" /><path d="M10 22h4" />
+    </svg>
+  );
+}
+
+function IconAlertTriangle({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle" }}>
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+      <path d="M12 9v4" /><path d="M12 17h.01" />
+    </svg>
+  );
+}
+
 export default function LoginScreen({
-  title = "🥟 Mandu Chat",
+  title = "Mandu Chat",
   description = "로그인 후 실시간 AI 채팅 데모를 사용할 수 있습니다.",
   onLogin,
 }: LoginScreenProps) {
@@ -59,10 +88,11 @@ export default function LoginScreen({
             background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
             borderRadius: 18,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 32,
             margin: "0 auto 16px",
             boxShadow: "0 8px 24px rgba(79,70,229,0.3)",
-          }}>🥟</div>
+          }}>
+            <IconMandu size={38} />
+          </div>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", margin: 0 }}>{title}</h1>
           <p style={{ fontSize: 14, color: "#64748b", marginTop: 8, marginBottom: 0 }}>{description}</p>
         </div>
@@ -84,7 +114,7 @@ export default function LoginScreen({
             marginBottom: 24,
           }}>
             <div style={{ fontSize: 12, fontWeight: 600, color: "#7c3aed", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-              <span>💡</span> 테스트 계정
+              <IconLightbulb size={13} /> 테스트 계정
             </div>
             <div style={{ fontSize: 12, color: "#6d28d9", lineHeight: 1.8 }}>
               <div>이메일: <code style={{ background: "#fff", padding: "1px 6px", borderRadius: 4, fontFamily: "monospace", fontSize: 11 }}>{DEMO_ACCOUNTS[0].email}</code></div>
@@ -161,7 +191,7 @@ export default function LoginScreen({
                 marginBottom: 16,
                 display: "flex", alignItems: "center", gap: 8,
               }}>
-                <span>⚠️</span> {error}
+                <IconAlertTriangle size={14} /> {error}
               </div>
             )}
 

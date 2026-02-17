@@ -1,21 +1,17 @@
 /**
  * Home Page SSR shell
  *
+ * HomePageClient를 직접 SSR 렌더링하여 클라이언트 hydration과 DOM 구조를 일치시킴.
  * Hydration entry is resolved from `app/page.island.tsx` by FS Routes scanner.
- * Keep this component framework-agnostic and always render meaningful SSR markup.
  */
 
-// Import island to satisfy Island-First integrity check
+// Island 등록을 위한 import (Mandu island 무결성 체크)
 import HomePageIsland from "./page.island";
+import HomePageClient from "./page.client";
 
 export default function HomePage() {
-  return (
-    <main style={{ maxWidth: 520, margin: "80px auto", padding: 24, fontFamily: "sans-serif" }}>
-      <h1>🥟 Mandu Chat Demo</h1>
-      <p>로그인 화면을 준비하고 있습니다...</p>
-      <noscript>이 데모는 JavaScript가 필요합니다.</noscript>
-      {/* Island hydration entry - loaded by Mandu runtime */}
-      {typeof HomePageIsland !== 'undefined' && null}
-    </main>
-  );
+  // HomePageClient를 SSR로 렌더링 → 클라이언트 hydrateRoot와 동일한 DOM 구조 생성
+  // (session=null이므로 LoginScreen이 렌더링됨, 클라이언트 초기 render와 일치)
+  void HomePageIsland; // island 등록 유지
+  return <HomePageClient />;
 }
