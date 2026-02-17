@@ -23,14 +23,14 @@
     "test:ate:e2e": "bun run scripts/run-ate-e2e.ts"
   },
   "dependencies": {
-    "@mandujs/core": "^0.18.6",
-    "@mandujs/mcp": "^0.18.2",
+    "@mandujs/core": "file:../mandu/packages/core",
+    "@mandujs/mcp": "file:../mandu/packages/mcp",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@mandujs/ate": "^0.17.0",
-    "@mandujs/cli": "^0.18.4",
+    "@mandujs/ate": "file:../mandu/packages/ate",
+    "@mandujs/cli": "file:../mandu/packages/cli",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/cli": "^4.1.18",
     "@types/react": "^19.2.14",
