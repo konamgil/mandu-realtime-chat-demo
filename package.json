@@ -20,7 +20,8 @@
     "test:e2e": "bunx playwright test",
     "record:setup": "bunx playwright install chromium",
     "record:demo": "bun run scripts/record-realtime-chat.ts",
-    "test:ate:e2e": "bun run scripts/run-ate-e2e.ts"
+    "test:ate:e2e": "bun run scripts/run-ate-e2e.ts",
+    "record:scenarios": "bun run scripts/record-chat-scenario.ts 01-login-send && bun run scripts/record-chat-scenario.ts 02-offline-reconnect && bun run scripts/record-chat-scenario.ts 03-longtext-guard"
   },
   "dependencies": {
     "@mandujs/core": "file:../mandu/packages/core",
