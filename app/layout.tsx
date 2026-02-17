@@ -1,24 +1,15 @@
 /**
- * Root Layout (Minimal)
+ * Root Layout
+ *
+ * NOTE: Mandu의 renderToHTML이 이미 <html><head><body> 구조를 생성하므로
+ * layout.tsx에서 중복 HTML 태그를 사용하면 이중 중첩 버그가 발생합니다.
+ * Issue: https://github.com/konamgil/mandu/issues/109
  */
-
-import "./globals.css";
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
-  return (
-    <html lang="ko">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>mandu-chat-demo</title>
-      </head>
-      <body>
-        {children}
-      </body>
-    </html>
-  );
+  return <>{children}</>;
 }
