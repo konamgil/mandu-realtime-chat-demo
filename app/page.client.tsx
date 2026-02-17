@@ -130,19 +130,29 @@ export default function HomePageClient() {
   }
 
   return (
-    <main style={{ maxWidth: 840, margin: "0 auto", padding: "24px", fontFamily: "sans-serif" }}>
-      <h1>🥟 Mandu Real-time Chat Demo</h1>
-      <p>
-        상태: <b>{status}</b> · 사용자: <b>{session.name}</b> ({session.email}) · API: <code>/api/chat/*</code>
-      </p>
+    <main className="max-w-4xl mx-auto p-6">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2">🥟 Mandu Real-time Chat Demo</h1>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <span>상태: <span className={`font-medium ${connected ? 'text-green-600' : 'text-amber-600'}`}>{status}</span></span>
+          <span>·</span>
+          <span>사용자: <span className="font-medium">{session.name}</span> ({session.email})</span>
+          <span>·</span>
+          <span>API: <code className="px-1.5 py-0.5 bg-secondary rounded text-xs">/api/chat/*</code></span>
+        </div>
+      </div>
 
-      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-        <label>
-          초기 로드 개수:&nbsp;
-          <select value={snapshotLimit} onChange={(e) => setSnapshotLimit(Number(e.target.value))}>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
+      <div className="flex flex-wrap items-center gap-3 mb-4 p-3 bg-secondary/50 rounded-lg">
+        <label className="flex items-center gap-2">
+          <span className="text-sm font-medium">초기 로드:</span>
+          <select
+            value={snapshotLimit}
+            onChange={(e) => setSnapshotLimit(Number(e.target.value))}
+            className="px-3 py-1.5 border rounded-md bg-background text-sm"
+          >
+            <option value={20}>20개</option>
+            <option value={50}>50개</option>
+            <option value={100}>100개</option>
           </select>
         </label>
         <button
@@ -153,36 +163,39 @@ export default function HomePageClient() {
             setMessages([]);
             setText("");
           }}
+          className="px-4 py-1.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
         >
           로그아웃
         </button>
-        <small style={{ color: "#666" }}>값 변경 시 스트림을 재연결해 최근 메시지 스냅샷을 다시 가져옵니다.</small>
+        <small className="text-xs text-muted-foreground">값 변경 시 스트림 재연결</small>
       </div>
 
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: 8,
-          height: 420,
-          overflow: "auto",
-          padding: 12,
-          marginBottom: 12,
-        }}
-      >
-        {messages.map((m) => (
-          <div key={m.id} style={{ marginBottom: 10 }}>
-            <b>
-              [{m.role}] {m.author}
-            </b>
-            <div>{m.text}</div>
-            <small style={{ color: "#666" }}>{new Date(m.createdAt).toLocaleTimeString()}</small>
-          </div>
-        ))}
+      <div className="border rounded-lg h-[420px] overflow-y-auto p-4 mb-4 bg-white shadow-sm">
+        <div className="space-y-3">
+          {messages.map((m) => (
+            <div
+              key={m.id}
+              className={`p-3 rounded-lg ${
+                m.role === 'user' ? 'bg-primary text-primary-foreground ml-12' :
+                m.role === 'ai' ? 'bg-secondary mr-12' :
+                'bg-muted text-sm italic'
+              }`}
+            >
+              <div className="font-semibold text-xs mb-1 opacity-80">
+                [{m.role}] {m.author}
+              </div>
+              <div>{m.text}</div>
+              <div className="text-xs opacity-70 mt-1">
+                {new Date(m.createdAt).toLocaleTimeString()}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {error ? <p style={{ color: "crimson", marginTop: 0 }}>{error}</p> : null}
+      {error && <p className="text-red-600 text-sm mb-3 p-2 bg-red-50 rounded">{error}</p>}
 
-      <form onSubmit={sendMessage} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+      <form onSubmit={sendMessage} className="flex items-center gap-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -191,19 +204,16 @@ export default function HomePageClient() {
               void sendMessage(e);
             }
           }}
-          placeholder="메시지를 입력하세요"
-          style={{ flex: 1, padding: 10 }}
+          placeholder="메시지를 입력하세요 (Ctrl+Enter로 전송)"
+          className="flex-1 px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
         />
-        <small
-          style={{
-            color: remainingChars < 0 ? "crimson" : "#666",
-            minWidth: 72,
-            textAlign: "right",
-          }}
-        >
+        <small className={`text-xs min-w-[60px] text-right ${remainingChars < 0 ? 'text-red-600 font-medium' : 'text-muted-foreground'}`}>
           {remainingChars}자
         </small>
-        <button disabled={sending || remainingChars < 0} style={{ padding: "10px 16px" }}>
+        <button
+          disabled={sending || remainingChars < 0}
+          className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+        >
           {sending ? "전송중..." : "전송"}
         </button>
       </form>

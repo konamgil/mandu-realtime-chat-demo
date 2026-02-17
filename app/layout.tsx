@@ -2,6 +2,8 @@
  * Root Layout (Minimal)
  */
 
+import "./globals.css";
+
 interface RootLayoutProps {
   children: React.ReactNode;
 }

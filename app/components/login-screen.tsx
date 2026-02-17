@@ -37,45 +37,60 @@ export default function LoginScreen({
   }
 
   return (
-    <main style={{ maxWidth: 520, margin: "80px auto", padding: 24, fontFamily: "sans-serif" }}>
-      <h1>{title}</h1>
-      <p>{description}</p>
+    <main className="max-w-md mx-auto mt-20 p-6">
+      <div className="bg-white rounded-xl shadow-lg p-8 border">
+        <h1 className="text-3xl font-bold mb-2">{title}</h1>
+        <p className="text-muted-foreground mb-6">{description}</p>
 
-      <div style={{ background: "#fafafa", border: "1px solid #eee", borderRadius: 8, padding: 12, marginBottom: 16 }}>
-        <b>테스트 계정</b>
-        <div>email: <code>{DEMO_ACCOUNTS[0].email}</code></div>
-        <div>password: <code>{DEMO_ACCOUNTS[0].password}</code></div>
+        <div className="bg-secondary/30 border border-border rounded-lg p-4 mb-6">
+          <div className="font-semibold mb-2">테스트 계정</div>
+          <div className="text-sm space-y-1">
+            <div>
+              email: <code className="px-2 py-0.5 bg-white rounded text-xs font-mono">{DEMO_ACCOUNTS[0].email}</code>
+            </div>
+            <div>
+              password: <code className="px-2 py-0.5 bg-white rounded text-xs font-mono">{DEMO_ACCOUNTS[0].password}</code>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <label className="block">
+            <span className="text-sm font-medium mb-1.5 block">이메일</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="demo@mandu.dev"
+              className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+              required
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-sm font-medium mb-1.5 block">비밀번호</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="password"
+              className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+              required
+            />
+          </label>
+
+          {error && (
+            <p className="text-red-600 text-sm p-2 bg-red-50 rounded">{error}</p>
+          )}
+
+          <button
+            type="submit"
+            className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            로그인
+          </button>
+        </form>
       </div>
-
-      <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
-        <label style={{ display: "grid", gap: 4 }}>
-          이메일
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="demo@mandu.dev"
-            style={{ padding: 10 }}
-            required
-          />
-        </label>
-
-        <label style={{ display: "grid", gap: 4 }}>
-          비밀번호
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="password"
-            style={{ padding: 10 }}
-            required
-          />
-        </label>
-
-        {error ? <p style={{ color: "crimson", margin: 0 }}>{error}</p> : null}
-
-        <button type="submit" style={{ padding: "10px 16px" }}>로그인</button>
-      </form>
     </main>
   );
 }
