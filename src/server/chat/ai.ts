@@ -1,4 +1,4 @@
-import type { ChatMessage } from "./store";
+import type { ChatMessage } from "../../shared/types/chat";
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

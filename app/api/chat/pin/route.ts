@@ -25,6 +25,9 @@ async function handler(req: Request) {
   const pins = pinnedMessages.get(roomId) ?? [];
 
   if (method === "POST") {
+    if (!messageId) {
+      return Response.json({ error: "messageId required" }, { status: 400 });
+    }
     if (pins.includes(messageId)) {
       return Response.json({ success: true, pinnedIds: pins });
     }
