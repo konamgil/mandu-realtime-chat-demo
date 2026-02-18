@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { mkdir } from "node:fs/promises";
 
 async function sleep(ms: number) {
   await new Promise((r) => setTimeout(r, ms));
@@ -46,14 +47,16 @@ async function main() {
   const port = process.env.PORT ? Number(process.env.PORT) : 3333;
   const baseUrl = process.env.BASE_URL ?? `http://localhost:${port}`;
   const healthUrl = `${baseUrl}/api/health`;
+  const cssUrl = `${baseUrl}/.mandu/client/globals.css`;
 
   console.log(`[ATE-E2E] baseUrl=${baseUrl}`);
 
-  // Start dev server.
-  // NOTE: `mandu dev` performs FS Routes scanning on startup.
-  // We intentionally avoid running `routes generate` as a separate step because
-  // in some environments it can keep the process alive (non-exiting).
-  const dev = spawn("bun", ["run", "dev:safe"], {
+  // Pre-build CSS once to avoid first-load 404 noise on /.mandu/client/globals.css
+  await mkdir(".mandu/client", { recursive: true });
+  await runCommand("tailwind prebuild", "./node_modules/.bin/tailwindcss", ["-i", "app/globals.css", "-o", ".mandu/client/globals.css"], {});
+
+  // Start dev server directly (dev:safe wrapper can be unstable in some environments)
+  const dev = spawn("./node_modules/.bin/mandu", ["dev", "--watch"], {
     stdio: "inherit",
     env: { ...process.env, PORT: String(port) },
     shell: false,
@@ -68,6 +71,7 @@ async function main() {
 
   try {
     await waitForHealth(healthUrl, 30_000);
+    await waitForHealth(cssUrl, 10_000);
 
     // Run ATE pipeline via mandu CLI (extract→generate→run→report)
     await runCommand(
