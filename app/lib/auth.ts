@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export const AUTH_STORAGE_KEY = "mandu-chat-demo.session";
 
 export type DemoAccount = {
@@ -6,11 +8,13 @@ export type DemoAccount = {
   name: string;
 };
 
-export type AuthSession = {
-  email: string;
-  name: string;
-  loggedInAt: string;
-};
+export const AuthSessionSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+  loggedInAt: z.string(),
+});
+
+export type AuthSession = z.infer<typeof AuthSessionSchema>;
 
 export const DEMO_ACCOUNTS: DemoAccount[] = [
   { email: "demo@mandu.dev", password: "password", name: "Demo User" },
@@ -39,14 +43,8 @@ export function parseSession(raw: string | null | undefined): AuthSession | null
   if (!raw) return null;
 
   try {
-    const parsed = JSON.parse(raw) as Partial<AuthSession>;
-    if (!parsed.email || !parsed.name || !parsed.loggedInAt) return null;
-
-    return {
-      email: String(parsed.email),
-      name: String(parsed.name),
-      loggedInAt: String(parsed.loggedInAt),
-    };
+    const result = AuthSessionSchema.safeParse(JSON.parse(raw));
+    return result.success ? result.data : null;
   } catch {
     return null;
   }

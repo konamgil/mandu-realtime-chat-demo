@@ -1,58 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import LoginScreen from "./components/login-screen";
 import { clearStoredSession, getStoredSession, type AuthSession } from "./lib/auth";
-
-// ─── Types ────────────────────────────────────────────────
-
-type ChatRole = "user" | "ai" | "agent";
-
-type ChatMessage = {
-  id: string;
-  role: ChatRole;
-  author: string;
-  text: string;
-  createdAt: string;
-};
-
-type ReactionGroup = {
-  emoji: string;
-  count: number;
-  users: string[];
-  hasReacted?: boolean;
-};
-
-type PollOption = { text: string; votes: number };
-type Poll = {
-  id: string;
-  roomId: string;
-  question: string;
-  options: PollOption[];
-  anonymous: boolean;
-  createdAt: string;
-  createdBy: string;
-};
-
-type SentimentResult = {
-  emoji: string;
-  label: "긍정" | "부정" | "중립" | "유머" | "분노" | "놀람" | "슬픔";
-  score: number;
-  keywords: string[];
-};
-
-type Suggestion = { text: string; tone: "friendly" | "formal" | "brief" };
+import type {
+  ChatMessage,
+  ChatRole,
+  Poll,
+  ReactionGroup,
+  SentimentResult,
+  SuggestionTone,
+  Suggestion,
+  SlowModeSeconds,
+} from "../src/shared/types/chat";
+import {
+  SUGGESTION_TONE_LABEL,
+  SUGGESTION_TONE_COLOR,
+  SLOW_MODE_OPTIONS,
+} from "../src/shared/types/chat";
+import { useChat } from "./hooks/useChat";
+import { useSentiment } from "./hooks/useSentiment";
+import { useReactions } from "./hooks/useReactions";
+import { usePinnedMessages } from "./hooks/usePinnedMessages";
+import { usePolls } from "./hooks/usePolls";
+import { useSlowMode } from "./hooks/useSlowMode";
 
 // ─── Constants ────────────────────────────────────────────
 
 const ROOM_ID = "default";
 const QUICK_EMOJIS = ["❤️", "👍", "😂", "😮", "😢", "🎉"];
-const SLOW_MODE_OPTIONS = [0, 5, 10, 30, 60];
-
-function getInitialSession(): AuthSession | null {
-  if (typeof window === "undefined") return null;
-  return getStoredSession();
-}
 
 // ─── Icons ────────────────────────────────────────────────
 
@@ -346,7 +322,6 @@ function MessageBubble({
         )}
       </div>
 
-      {/* 액션 버튼들 */}
       {hovered && (
         <div style={{
           position: "absolute", top: 0,
@@ -431,16 +406,21 @@ function PinnedBanner({
 
 // ─── Summary Modal ────────────────────────────────────────
 
+type SummaryData = { summary: string; messageCount: number; cachedUntil: string };
+
 function SummaryModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<{ summary: string; messageCount: number; cachedUntil: string } | null>(null);
+  const [data, setData] = useState<SummaryData | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/chat/summary?roomId=${ROOM_ID}`)
       .then((r) => r.json())
-      .then((d) => { if (d.error) throw new Error(d.error); setData(d); })
-      .catch((e) => setErr(String(e.message)))
+      .then((d: SummaryData & { error?: string }) => {
+        if (d.error) throw new Error(d.error);
+        setData(d);
+      })
+      .catch((e: Error) => setErr(e.message))
       .finally(() => setLoading(false));
   }, []);
 
@@ -495,13 +475,13 @@ function SuggestPanel({
   useEffect(() => {
     fetch(`/api/chat/suggest?roomId=${ROOM_ID}`)
       .then((r) => r.json())
-      .then((d) => { setSuggestions(d.suggestions ?? []); setBasedOn(d.basedOn ?? ""); })
+      .then((d: { suggestions?: Suggestion[]; basedOn?: string }) => {
+        setSuggestions(d.suggestions ?? []);
+        setBasedOn(d.basedOn ?? "");
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
-
-  const toneLabel: Record<string, string> = { friendly: "친근하게", formal: "격식체", brief: "짧게" };
-  const toneColor: Record<string, string> = { friendly: "#4f46e5", formal: "#0f766e", brief: "#92400e" };
 
   return (
     <div style={{
@@ -537,10 +517,10 @@ function SuggestPanel({
             >
               <span style={{
                 flexShrink: 0, fontSize: 10, fontWeight: 700,
-                color: "#fff", background: toneColor[s.tone] ?? "#64748b",
+                color: "#fff", background: SUGGESTION_TONE_COLOR[s.tone],
                 borderRadius: 4, padding: "2px 5px", marginTop: 2,
               }}>
-                {toneLabel[s.tone] ?? s.tone}
+                {SUGGESTION_TONE_LABEL[s.tone]}
               </span>
               <span>{s.text}</span>
             </button>
@@ -556,7 +536,7 @@ function SuggestPanel({
 function SlowModeBanner({
   intervalSeconds, retryAfter,
 }: {
-  intervalSeconds: number;
+  intervalSeconds: SlowModeSeconds;
   retryAfter?: number;
 }) {
   if (intervalSeconds === 0) return null;
@@ -578,7 +558,15 @@ function SlowModeBanner({
   );
 }
 
-// ─── Expire Modal ────────────────────────────────────────
+// ─── Expire Modal ─────────────────────────────────────────
+
+const EXPIRE_OPTIONS = [
+  { label: "30초", value: 30 },
+  { label: "1분", value: 60 },
+  { label: "5분", value: 300 },
+  { label: "10분", value: 600 },
+  { label: "1시간", value: 3600 },
+] as const;
 
 function ExpireModal({
   messageId, onSet, onCancel,
@@ -587,16 +575,8 @@ function ExpireModal({
   onSet: (id: string, expiresAt: number) => void;
   onCancel: () => void;
 }) {
-  const [seconds, setSeconds] = useState(30);
+  const [seconds, setSeconds] = useState<number>(30);
   const [submitting, setSubmitting] = useState(false);
-
-  const options = [
-    { label: "30초", value: 30 },
-    { label: "1분", value: 60 },
-    { label: "5분", value: 300 },
-    { label: "10분", value: 600 },
-    { label: "1시간", value: 3600 },
-  ];
 
   const submit = async () => {
     setSubmitting(true);
@@ -628,7 +608,7 @@ function ExpireModal({
           <IconTimer size={16} /> 메시지 만료 시간 설정
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-          {options.map((o) => (
+          {EXPIRE_OPTIONS.map((o) => (
             <button
               key={o.value}
               onClick={() => setSeconds(o.value)}
@@ -802,78 +782,36 @@ function PollCard({ poll, userId, onVote }: { poll: Poll; userId: string; onVote
 
 export default function HomePageClient() {
   const [session, setSession] = useState<AuthSession | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
-  const [connected, setConnected] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [snapshotLimit, setSnapshotLimit] = useState(50);
-
-  // Phase 1 상태
-  const [reactions, setReactions] = useState<Record<string, ReactionGroup[]>>({});
-  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
-  const [polls, setPolls] = useState<Poll[]>([]);
   const [showSummary, setShowSummary] = useState(false);
   const [showPollForm, setShowPollForm] = useState(false);
-
-  // Phase 2 상태
-  const [sentiments, setSentiments] = useState<Record<string, SentimentResult>>({});
   const [expireTimes, setExpireTimes] = useState<Record<string, number>>({});
   const [expireModalId, setExpireModalId] = useState<string | null>(null);
-  const [slowModeInterval, setSlowModeInterval] = useState(0);
-  const [slowRetryAfter, setSlowRetryAfter] = useState(0);
-  const [showSlowModeMenu, setShowSlowModeMenu] = useState(false);
   const [showSuggest, setShowSuggest] = useState(false);
+  const [showSlowModeMenu, setShowSlowModeMenu] = useState(false);
 
-  // 마운트 후 세션 로드 (SSR hydration mismatch 방지)
-  useEffect(() => {
-    setSession(getInitialSession());
-  }, []);
+  const { sentiments, analyze } = useSentiment();
+  const { reactions, update: updateReaction } = useReactions();
+  const { pinnedIds, load: loadPins, pin: pinMessage, unpin: unpinMessage } = usePinnedMessages(ROOM_ID);
+  const { polls, setPolls, load: loadPolls } = usePolls(ROOM_ID);
+  const { intervalSeconds: slowModeInterval, retryAfter: slowRetryAfter, setMode: setSlowMode, startRetryCountdown } = useSlowMode(ROOM_ID, session);
+
+  const { messages, connected } = useChat(session, ROOM_ID, snapshotLimit, analyze);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const msgRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const slowModeMenuRef = useRef<HTMLDivElement>(null);
 
-  const upsertMessages = (incoming: ChatMessage[]) => {
-    setMessages((prev) => {
-      if (!incoming.length) return prev;
-      const seen = new Set(prev.map((m) => m.id));
-      const next = [...prev];
-      for (const m of incoming) {
-        if (seen.has(m.id)) continue;
-        seen.add(m.id); next.push(m);
-      }
-      return next;
-    });
-  };
-
-  // 감정 분석 (새 메시지 수신 시)
-  const analyzeSentiment = useCallback(async (msg: ChatMessage) => {
-    if (sentiments[msg.id]) return;
-    try {
-      const res = await fetch("/api/chat/sentiment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: msg.text, messageId: msg.id }),
-      });
-      if (res.ok) {
-        const data: SentimentResult = await res.json();
-        setSentiments((prev) => ({ ...prev, [msg.id]: data }));
-      }
-    } catch {}
-  }, [sentiments]);
+  // 마운트 후 세션 로드 (SSR hydration mismatch 방지)
+  useEffect(() => {
+    setSession(getStoredSession());
+  }, []);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, polls]);
-
-  // 느린 모드 설정 로드
-  useEffect(() => {
-    if (!session) return;
-    fetch(`/api/chat/slowmode?roomId=${ROOM_ID}`)
-      .then((r) => r.json())
-      .then((d) => setSlowModeInterval(d.intervalSeconds ?? 0))
-      .catch(() => {});
-  }, [session]);
 
   // 느린 모드 메뉴 외부 클릭 닫기
   useEffect(() => {
@@ -887,104 +825,27 @@ export default function HomePageClient() {
     return () => document.removeEventListener("mousedown", handler);
   }, [showSlowModeMenu]);
 
-  // SSE 연결 + 스냅샷 로드
-  useEffect(() => {
-    if (!session) { setConnected(false); return; }
-    setMessages([]);
-    let latestId: string | undefined;
-
-    const syncMessages = async () => {
-      const qs = new URLSearchParams();
-      latestId ? qs.set("sinceId", latestId) : qs.set("limit", String(snapshotLimit));
-      const r = await fetch(`/api/chat/messages?${qs}`);
-      const d = await r.json();
-      const incoming = (d.messages ?? []) as ChatMessage[];
-      if (incoming.length) latestId = incoming[incoming.length - 1].id;
-      upsertMessages(incoming);
-      for (const m of incoming) analyzeSentiment(m);
-    };
-
-    syncMessages().catch(() => {});
-
-    const es = new EventSource("/api/chat/stream");
-    es.addEventListener("ready", () => { setConnected(true); syncMessages().catch(() => {}); });
-    es.addEventListener("message", (e) => {
-      const m = JSON.parse((e as MessageEvent).data) as ChatMessage;
-      latestId = m.id;
-      upsertMessages([m]);
-      analyzeSentiment(m);
-    });
-    es.onerror = () => setConnected(false);
-    return () => es.close();
-  }, [session, snapshotLimit]);
-
-  // 핀 목록 로드
-  const loadPins = async () => {
-    const r = await fetch(`/api/chat/pin?roomId=${ROOM_ID}&messageId=_`).catch(() => null);
-    if (r?.ok) {
-      const d = await r.json();
-      setPinnedIds(d.pinnedIds ?? []);
-    }
-  };
-  useEffect(() => { if (session) loadPins(); }, [session]);
-
-  // 투표 목록 로드
-  const loadPolls = async () => {
-    const r = await fetch(`/api/chat/poll?roomId=${ROOM_ID}`).catch(() => null);
-    if (r?.ok) {
-      const d = await r.json();
-      setPolls(d.polls ?? []);
-    }
-  };
-  useEffect(() => { if (session) loadPolls(); }, [session]);
-
-  // 핀 토글
-  const pinMessage = async (messageId: string) => {
-    const r = await fetch("/api/chat/pin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ roomId: ROOM_ID, messageId }),
-    });
-    if (r.ok) { const d = await r.json(); setPinnedIds(d.pinnedIds); }
-    else { const d = await r.json(); setError(d.error ?? "핀 추가 실패"); }
-  };
-
-  const unpinMessage = async (messageId: string) => {
-    const r = await fetch("/api/chat/pin", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ roomId: ROOM_ID, messageId }),
-    });
-    if (r.ok) { const d = await r.json(); setPinnedIds(d.pinnedIds); }
-  };
+  useEffect(() => { if (session) { loadPins(); loadPolls(); } }, [session]);
 
   const scrollToMessage = (id: string) => {
     msgRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  // 느린 모드 설정
-  const setSlowMode = async (intervalSeconds: number) => {
-    setShowSlowModeMenu(false);
-    const res = await fetch("/api/chat/slowmode", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ roomId: ROOM_ID, intervalSeconds }),
-    });
-    if (res.ok) setSlowModeInterval(intervalSeconds);
-  };
-
-  // 만료 시간 설정
   const handleExpireSet = (id: string, expiresAt: number) => {
     setExpireTimes((prev) => ({ ...prev, [id]: expiresAt }));
     setExpireModalId(null);
   };
 
-  // 메시지 전송 (느린 모드 체크)
+  const handlePin = async (messageId: string) => {
+    const err = await pinMessage(messageId);
+    if (err) setError(err);
+  };
+
   async function sendMessage() {
     const trimmed = text.trim();
     if (!trimmed || sending || trimmed.length > 500 || !session) return;
 
-    setSending(true); setError(null); setSlowRetryAfter(0);
+    setSending(true); setError(null);
     try {
       const r = await fetch("/api/chat/send", {
         method: "POST",
@@ -992,16 +853,8 @@ export default function HomePageClient() {
         body: JSON.stringify({ text: trimmed, userId: session.email }),
       });
       if (!r.ok) {
-        const errData = await r.json().catch(() => ({}));
-        if (errData.retryAfterSeconds) {
-          setSlowRetryAfter(errData.retryAfterSeconds);
-          const tick = setInterval(() => {
-            setSlowRetryAfter((v) => {
-              if (v <= 1) { clearInterval(tick); return 0; }
-              return v - 1;
-            });
-          }, 1000);
-        }
+        const errData = await r.json().catch(() => ({})) as { retryAfterSeconds?: number; error?: string };
+        if (errData.retryAfterSeconds) startRetryCountdown(errData.retryAfterSeconds);
         setError(errData.error ?? "전송 실패");
         return;
       }
@@ -1052,7 +905,6 @@ export default function HomePageClient() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {/* AI 요약 */}
           <button onClick={() => setShowSummary(true)} title="AI 대화 요약" style={{
             padding: "6px 10px", borderRadius: 8, border: "1px solid #e0e7ff",
             background: "#eef2ff", color: "#4f46e5", fontSize: 12, fontWeight: 600, cursor: "pointer",
@@ -1061,7 +913,6 @@ export default function HomePageClient() {
             <IconBot size={14} /> 요약
           </button>
 
-          {/* 투표 */}
           <button onClick={() => setShowPollForm((p) => !p)} title="투표 만들기" style={{
             padding: "6px 10px", borderRadius: 8, border: "1px solid #e0e7ff",
             background: showPollForm ? "#c7d2fe" : "#eef2ff", color: "#4f46e5",
@@ -1071,7 +922,6 @@ export default function HomePageClient() {
             <IconBarChart size={14} /> 투표
           </button>
 
-          {/* 느린 모드 */}
           <div style={{ position: "relative" }} ref={slowModeMenuRef}>
             <button
               onClick={() => setShowSlowModeMenu((p) => !p)}
@@ -1097,7 +947,7 @@ export default function HomePageClient() {
                 {SLOW_MODE_OPTIONS.map((s) => (
                   <button
                     key={s}
-                    onClick={() => setSlowMode(s)}
+                    onClick={() => { setShowSlowModeMenu(false); void setSlowMode(s); }}
                     style={{
                       display: "block", width: "100%", textAlign: "left",
                       padding: "7px 10px", borderRadius: 8, border: "none",
@@ -1114,7 +964,6 @@ export default function HomePageClient() {
             )}
           </div>
 
-          {/* 사용자 정보 */}
           <div style={{
             width: 32, height: 32, borderRadius: "50%",
             background: "#e0e7ff", display: "flex",
@@ -1128,7 +977,7 @@ export default function HomePageClient() {
             <div style={{ color: "#94a3b8", fontSize: 11 }}>{session.email}</div>
           </div>
           <button
-            onClick={() => { clearStoredSession(); setSession(null); setMessages([]); setText(""); }}
+            onClick={() => { clearStoredSession(); setSession(null); setText(""); }}
             style={{
               padding: "6px 14px", borderRadius: 8, border: "1px solid #e2e8f0",
               background: "#fff", color: "#64748b", fontSize: 13, fontWeight: 500, cursor: "pointer",
@@ -1139,7 +988,6 @@ export default function HomePageClient() {
         </div>
       </header>
 
-      {/* 고정 메시지 배너 */}
       <PinnedBanner
         pinnedIds={pinnedIds}
         messages={messages}
@@ -1147,7 +995,6 @@ export default function HomePageClient() {
         onScrollTo={scrollToMessage}
       />
 
-      {/* 메시지 + 투표 영역 */}
       <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: 12 }}>
         {messages.length === 0 && polls.length === 0 ? (
           <div style={{
@@ -1171,14 +1018,13 @@ export default function HomePageClient() {
                 userId={session.email}
                 sentiment={sentiments[m.id]}
                 expiresAt={expireTimes[m.id]}
-                onPin={pinMessage}
+                onPin={handlePin}
                 onUnpin={unpinMessage}
-                onReactionUpdate={(id, r) => setReactions((prev) => ({ ...prev, [id]: r }))}
+                onReactionUpdate={(id, r) => updateReaction(id, r)}
                 onSetExpire={(id) => setExpireModalId(id)}
                 domRef={(el) => { msgRefs.current[m.id] = el; }}
               />
             ))}
-            {/* 투표 카드들 */}
             {polls.map((poll) => (
               <div key={poll.id} style={{ display: "flex", justifyContent: "flex-start" }}>
                 <PollCard
@@ -1193,7 +1039,6 @@ export default function HomePageClient() {
         <div ref={bottomRef} />
       </div>
 
-      {/* 에러 */}
       {error && (
         <div style={{
           margin: "0 20px 8px", padding: "10px 14px",
@@ -1208,10 +1053,8 @@ export default function HomePageClient() {
         </div>
       )}
 
-      {/* 느린 모드 배너 */}
       <SlowModeBanner intervalSeconds={slowModeInterval} retryAfter={slowRetryAfter} />
 
-      {/* AI 답변 제안 패널 */}
       {showSuggest && (
         <SuggestPanel
           onSelect={(t) => { setText(t); inputRef.current?.focus(); }}
@@ -1219,7 +1062,6 @@ export default function HomePageClient() {
         />
       )}
 
-      {/* 투표 폼 */}
       {showPollForm && (
         <PollForm
           userId={session.email}
@@ -1228,14 +1070,12 @@ export default function HomePageClient() {
         />
       )}
 
-      {/* 입력 영역 */}
       <div style={{ backgroundColor: "#fff", borderTop: "1px solid #e2e8f0", padding: "12px 20px 16px", flexShrink: 0 }}>
         <div style={{
           display: "flex", alignItems: "flex-end", gap: 10,
           background: "#f8fafc", border: "1.5px solid #e2e8f0",
           borderRadius: 16, padding: "10px 14px",
         }}>
-          {/* AI 제안 버튼 */}
           <button
             onClick={() => setShowSuggest((p) => !p)}
             title="AI 답변 제안"
@@ -1308,10 +1148,8 @@ export default function HomePageClient() {
         </div>
       </div>
 
-      {/* AI 요약 모달 */}
       {showSummary && <SummaryModal onClose={() => setShowSummary(false)} />}
 
-      {/* 만료 시간 설정 모달 */}
       {expireModalId && (
         <ExpireModal
           messageId={expireModalId}
