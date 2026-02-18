@@ -8,8 +8,8 @@
   },
   "scripts": {
     "routes:generate": "./node_modules/.bin/mandu routes generate",
-    "dev": "PORT=3333 ./node_modules/.bin/mandu dev",
-    "dev:safe": "./node_modules/.bin/mandu lock && PORT=3333 ./node_modules/.bin/mandu dev --watch",
+    "dev": "mkdir -p .mandu/client && ./node_modules/.bin/tailwindcss -i app/globals.css -o .mandu/client/globals.css >/dev/null 2>&1 || true && PORT=3333 ./node_modules/.bin/mandu dev",
+    "dev:safe": "./node_modules/.bin/mandu lock && mkdir -p .mandu/client && ./node_modules/.bin/tailwindcss -i app/globals.css -o .mandu/client/globals.css >/dev/null 2>&1 || true && PORT=3333 ./node_modules/.bin/mandu dev --watch",
     "build": "./node_modules/.bin/mandu build",
     "start": "./node_modules/.bin/mandu start",
     "check": "./node_modules/.bin/mandu check",
