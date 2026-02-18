@@ -24,14 +24,14 @@
     "record:scenarios": "bun run scripts/record-chat-scenario.ts 01-login-send && bun run scripts/record-chat-scenario.ts 02-offline-reconnect && bun run scripts/record-chat-scenario.ts 03-longtext-guard"
   },
   "dependencies": {
-    "@mandujs/core": "file:../mandu/packages/core",
-    "@mandujs/mcp": "file:../mandu/packages/mcp",
+    "@mandujs/core": "^0.18.18",
+    "@mandujs/mcp": "^0.18.5",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@mandujs/ate": "file:../mandu/packages/ate",
-    "@mandujs/cli": "file:../mandu/packages/cli",
+    "@mandujs/ate": "^0.17.0",
+    "@mandujs/cli": "^0.18.7",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/cli": "^4.1.18",
     "@types/react": "^19.2.14",
