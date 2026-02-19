@@ -781,7 +781,8 @@ function PollCard({ poll, userId, onVote }: { poll: Poll; userId: string; onVote
 // ─── Main Component ───────────────────────────────────────
 
 export default function HomePageClient() {
-  const [session, setSession] = useState<AuthSession | null>(null);
+  // "loading": SSR/hydration 직후 상태 → null 렌더링으로 LoginScreen flash 방지
+  const [session, setSession] = useState<AuthSession | null | "loading">("loading");
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -797,16 +798,18 @@ export default function HomePageClient() {
   const { reactions, update: updateReaction } = useReactions();
   const { pinnedIds, load: loadPins, pin: pinMessage, unpin: unpinMessage } = usePinnedMessages(ROOM_ID);
   const { polls, setPolls, load: loadPolls } = usePolls(ROOM_ID);
-  const { intervalSeconds: slowModeInterval, retryAfter: slowRetryAfter, setMode: setSlowMode, startRetryCountdown } = useSlowMode(ROOM_ID, session);
+  const resolvedSession = session === "loading" ? null : session;
 
-  const { messages, connected } = useChat(session, ROOM_ID, snapshotLimit, analyze);
+  const { intervalSeconds: slowModeInterval, retryAfter: slowRetryAfter, setMode: setSlowMode, startRetryCountdown } = useSlowMode(ROOM_ID, resolvedSession);
+
+  const { messages, connected } = useChat(resolvedSession, ROOM_ID, snapshotLimit, analyze);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const msgRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const slowModeMenuRef = useRef<HTMLDivElement>(null);
 
-  // 마운트 후 세션 로드 (SSR hydration mismatch 방지)
+  // mount 직후 localStorage 확인 → "loading" → 실제 session 상태로 전환
   useEffect(() => {
     setSession(getStoredSession());
   }, []);
@@ -850,7 +853,7 @@ export default function HomePageClient() {
       const r = await fetch("/api/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: trimmed, userId: session.email }),
+        body: JSON.stringify({ text: trimmed, userId: resolvedSession?.email }),
       });
       if (!r.ok) {
         const errData = await r.json().catch(() => ({})) as { retryAfterSeconds?: number; error?: string };
@@ -865,6 +868,9 @@ export default function HomePageClient() {
   const remainingChars = 500 - text.length;
   const isOverLimit = remainingChars < 0;
   const canSend = text.trim().length > 0 && !sending && !isOverLimit && !!session && slowRetryAfter === 0;
+
+  // SSR·hydration 완료 전: 빈 화면 (LoginScreen flash 방지)
+  if (session === "loading") return null;
 
   if (!session) {
     return (

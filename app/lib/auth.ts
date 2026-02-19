@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const AUTH_STORAGE_KEY = "mandu-chat-demo.session";
+export const AUTH_COOKIE_KEY = "mandu-chat-demo.session";
 
 export type DemoAccount = {
   email: string;
@@ -57,10 +58,15 @@ export function getStoredSession(): AuthSession | null {
 
 export function persistSession(session: AuthSession): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+  const json = JSON.stringify(session);
+  window.localStorage.setItem(AUTH_STORAGE_KEY, json);
+  // SSR 접근용 쿠키 (1일 만료)
+  const maxAge = 60 * 60 * 24;
+  document.cookie = `${AUTH_COOKIE_KEY}=${encodeURIComponent(json)}; max-age=${maxAge}; path=/; SameSite=Lax`;
 }
 
 export function clearStoredSession(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  document.cookie = `${AUTH_COOKIE_KEY}=; max-age=0; path=/; SameSite=Lax`;
 }
